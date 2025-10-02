@@ -1,260 +1,42 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ordena las Cartas - Animado</title>
-<style>
-  body {
-    margin: 0;
-    font-family: system-ui, "Segoe UI", Roboto, Arial;
-    background: #f5f7fb;
-    color: #222;
-    overflow: hidden;
-  }
-
-  h1 { margin: 10px 0 6px; font-size: 24px; }
-
-  .info { display:flex; gap:16px; align-items:center; margin-bottom:10px; }
-  .info p { margin:0; font-size:14px; background:#fff; padding:8px 12px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.06); }
-
-  /* TABLERO */
-  #board {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    padding: 18px;
-    background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 8px 20px rgba(15,30,70,0.06);
-    max-width: 100%;
-    overflow-x: auto;
-  }
-
-  .slot {
-    width: 110px;
-    height: 160px;
-    min-width: 110px;
-    min-height: 160px;
-    border-radius: 10px;
-    border: 3px dashed #d6dbe6;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: border-color .22s ease, transform .18s ease, box-shadow .18s ease;
-    position: relative;
-    flex: 0 0 auto;
-  }
-
-  .slot.over {
-    border-color: #31b26a;
-    transform: translateY(-6px);
-    box-shadow: 0 8px 18px rgba(49,178,106,0.08);
-  }
-
-  .card {
-    width: 98px;
-    height: 148px;
-    object-fit: cover;
-    border-radius: 8px;
-    user-select: none;
-    touch-action: none;
-    transition: transform .12s ease, box-shadow .12s ease;
-    cursor: grab;
-  }
-  .card:active { cursor: grabbing; }
-  .dragging {
-    position: fixed !important;
-    left: 0; top: 0;
-    z-index: 9999;
-    pointer-events: none;
-    transition: transform .08s linear;
-    box-shadow: 0 18px 40px rgba(10,20,40,0.32);
-    border-radius: 10px;
-  }
-
-  .controls { margin-top: 14px; display:flex; gap:10px; align-items:center; }
-  button {
-    border: none;
-    background: #2f80ed;
-    color: white;
-    padding: 10px 14px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    z-index: 20;
-  }
-  button.secondary { background: #6b7280; }
-
-  /* --------------------------
-     PANTALLA DE INICIO
-  -------------------------- */
-  #start-screen {
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(135deg,#f0f3f9,#dfe9f3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    z-index: 50;
-    overflow: hidden;
-    animation: fadeIn .6s ease;
-  }
-
-  #start-screen h1 {
-    font-size: 28px;
-    margin-bottom: 12px;
-  }
-  #start-screen p {
-    max-width: 320px;
-    margin: 0 auto 18px;
-    font-size: 15px;
-    line-height: 1.4;
-    color: #444;
-    background: rgba(255,255,255,0.6);
-    padding: 10px;
-    border-radius: 8px;
-  }
-  #start-screen button {
-    font-size: 16px;
-    padding: 12px 20px;
-  }
-
-  /* Cartas flotando en fondo */
-  .floating-card {
-    position: absolute;
-    width: 90px;
-    height: 130px;
-    background: url("Cartas/CartasPFE-08.png") center/cover no-repeat;
-    border-radius: 8px;
-    animation: float 6s infinite ease-in-out, spin 4s infinite linear;
-    opacity: 0.8;
-  }
-  @keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-    100% { transform: translateY(0px); }
-  }
-  @keyframes spin {
-    0% { transform: rotateY(0deg); }
-    100% { transform: rotateY(360deg); }
-  }
-
-  /* Fade */
-  .hidden { display:none; }
-  @keyframes fadeIn {
-    from { opacity:0; }
-    to { opacity:1; }
-  }
-  @keyframes fadeOut {
-    from { opacity:1; }
-    to { opacity:0; }
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Juego de Ordenar Cartas</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Pantalla de inicio -->
+  <div id="start-screen">
+    <h1>Ordena las Cartas 🃏</h1>
+    <p>Arrastra las cartas y ordénalas del 01 al 07 en el menor tiempo posible.</p>
+    <button id="start-btn">Comenzar</button>
 
-<!-- Pantalla de inicio -->
-<div id="start-screen">
-  <div class="floating-card" style="top:15%; left:20%; animation-delay:0s;"></div>
-  <div class="floating-card" style="top:40%; left:70%; animation-delay:1s;"></div>
-  <div class="floating-card" style="top:70%; left:30%; animation-delay:2s;"></div>
-  <h1>Ordena las Cartas</h1>
-  <p>Arrastra las cartas y colócalas en el orden correcto del 01 al 07 antes de que el tiempo termine. ¡Buena suerte!</p>
-  <button id="btn-iniciar">Iniciar Juego</button>
-</div>
-
-<!-- Juego -->
-<div id="game-area" class="hidden">
-  <h1>Ordena las Cartas</h1>
-  <div class="info">
-    <p>Tiempo: <span id="timer">60</span>s</p>
-    <p>Puntos: <span id="score">0</span></p>
+    <!-- Cartas decorativas -->
+    <div id="demo-cards">
+      <div class="card-demo"><img src="Cartas/CartasPFE-08.png"></div>
+      <div class="card-demo"><img src="Cartas/CartasPFE-08.png"></div>
+      <div class="card-demo"><img src="Cartas/CartasPFE-08.png"></div>
+    </div>
   </div>
 
-  <div id="board">
-    <div class="slot" data-slot="0"></div>
-    <div class="slot" data-slot="1"></div>
-    <div class="slot" data-slot="2"></div>
-    <div class="slot" data-slot="3"></div>
-    <div class="slot" data-slot="4"></div>
-    <div class="slot" data-slot="5"></div>
-    <div class="slot" data-slot="6"></div>
+  <!-- Pantalla de juego -->
+  <div id="game-screen" class="hidden">
+    <div id="hud">
+      <span>Tiempo: <span id="timer">60</span></span>
+      <span>Puntuación: <span id="score">0</span></span>
+    </div>
+    <div id="game-board"></div>
+    <button id="check-btn">Verificar</button>
   </div>
 
-  <div class="controls">
-    <button id="check-btn" class="secondary">Validar Orden</button>
-    <button id="restart-btn" class="secondary">Reiniciar</button>
+  <!-- Pantalla final -->
+  <div id="end-screen" class="hidden">
+    <h2 id="result-msg"></h2>
+    <p>Puntuación final: <span id="final-score">0</span></p>
+    <button id="restart-btn">Jugar de nuevo</button>
   </div>
-</div>
 
-<script>
-/* Juego (reutilizando la lógica anterior resumida) */
-const correctOrder = [
-  "CartasPFE-01.png",
-  "CartasPFE-02.png",
-  "CartasPFE-03.png",
-  "CartasPFE-04.png",
-  "CartasPFE-05.png",
-  "CartasPFE-06.png",
-  "CartasPFE-07.png"
-];
-const slots = Array.from(document.querySelectorAll('.slot'));
-const board = document.getElementById('board');
-const timerEl = document.getElementById('timer');
-const scoreEl = document.getElementById('score');
-const checkBtn = document.getElementById('check-btn');
-const restartBtn = document.getElementById('restart-btn');
-let timer, timeLeft, score;
-
-function shuffle(arr){ return arr.slice().sort(()=>Math.random()-0.5); }
-function createCard(imgName) {
-  const img = document.createElement('img');
-  img.src = "Cartas/"+imgName;
-  img.className = "card";
-  img.dataset.image = imgName;
-  img.draggable = false;
-  return img;
-}
-function placeShuffled() {
-  const shuffled = shuffle(correctOrder);
-  slots.forEach((s,i)=>{ s.innerHTML=""; s.appendChild(createCard(shuffled[i])); });
-}
-function startGame() {
-  placeShuffled();
-  clearInterval(timer);
-  timeLeft = 60; score = 0;
-  timerEl.textContent = timeLeft; scoreEl.textContent = score;
-  timer = setInterval(()=>{
-    timeLeft--; timerEl.textContent = timeLeft;
-    if(timeLeft<=0){ clearInterval(timer); alert("Tiempo agotado"); }
-  },1000);
-}
-function checkOrder() {
-  const current = slots.map(s=> s.querySelector('.card')?.dataset.image );
-  if(JSON.stringify(current)===JSON.stringify(correctOrder)){
-    score = 1000 + timeLeft*10; scoreEl.textContent=score; clearInterval(timer);
-    alert("¡Correcto! 🎉 Puntos: "+score);
-  } else { alert("El orden no es correcto."); }
-}
-checkBtn.addEventListener("click", checkOrder);
-restartBtn.addEventListener("click", startGame);
-
-/* Pantalla inicio */
-const startScreen = document.getElementById('start-screen');
-const gameArea = document.getElementById('game-area');
-document.getElementById('btn-iniciar').addEventListener("click", ()=>{
-  startScreen.style.animation="fadeOut .6s forwards";
-  setTimeout(()=>{
-    startScreen.classList.add("hidden");
-    gameArea.classList.remove("hidden");
-    startGame();
-  },600);
-});
-</script>
+  <script src="script.js"></script>
 </body>
 </html>
-
