@@ -7,19 +7,19 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- AUDIO -->
+  <!-- Música (dentro del body) -->
   <audio id="bg-music" src="audio/musica.mp3" loop></audio>
 
-  <!-- PANTALLA DE INICIO -->
+  <!-- PANTALLA DE INICIO (visible al cargar) -->
   <div id="start-screen" class="overlay">
     <div class="start-inner">
       <h1>Ordena las Cartas</h1>
-      <p>Arrastra las cartas y colócalas en el orden correcto: 
-        <strong>¿Cuál es el orden de los pasos para armar un Plan Familiar de Emergencia?</strong>.  
-        Hazlo antes de que se acabe el tiempo. ¡Buena suerte!
+      <p>
+        Arrastra las cartas y colócalas en el orden correcto: 
+        <strong>¿Cuál es el orden de los pasos para armar un Plan Familiar de Emergencia?</strong>
       </p>
+
       <div id="demo-cards" aria-hidden="true">
-        <!-- 3 cartas de demostración (reverso) -->
         <img class="demo-card" src="Cartas/CartasPFE-08.png" alt="reverso">
         <img class="demo-card" src="Cartas/CartasPFE-08.png" alt="reverso">
         <img class="demo-card" src="Cartas/CartasPFE-08.png" alt="reverso">
@@ -32,14 +32,13 @@
     </div>
   </div>
 
-  <!-- ÁREA DE JUEGO -->
+  <!-- ÁREA DE JUEGO (oculta al inicio) -->
   <main id="game-area" class="hidden" role="main" aria-label="Juego de ordenar cartas">
     <header class="hud">
       <div>Tiempo: <span id="timer">300</span>s</div>
       <div>Puntos: <span id="score">0</span></div>
     </header>
 
-    <!-- TABLERO -->
     <section id="board" aria-label="Tablero de 7 slots">
       <div class="slot-container"><span class="slot-number">1</span><div class="slot" data-slot="0"></div></div>
       <div class="slot-container"><span class="slot-number">2</span><div class="slot" data-slot="1"></div></div>
@@ -56,7 +55,7 @@
     </footer>
   </main>
 
-  <!-- PANTALLA FINAL -->
+  <!-- PANTALLA FINAL (oculta al inicio) -->
   <div id="end-screen" class="overlay hidden">
     <div class="start-inner">
       <h2 id="result-title">Resultado</h2>
@@ -70,3 +69,4 @@
   <script src="script.js"></script>
 </body>
 </html>
+
