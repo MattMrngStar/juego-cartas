@@ -134,6 +134,13 @@ function endGame() {
   finalScoreEl.textContent = score;
 }
 
+/* Inicial */
+placeShuffledCards();
+gameArea.classList.add('hidden');
+endScreen.classList.add('hidden');
+startScreen.classList.remove('hidden'); // 🔥 Muy importante
+
+
 // BOTONES
 btnStart.addEventListener("click", startGame);
 btnRestart.addEventListener("click", () => location.reload());
