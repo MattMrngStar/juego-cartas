@@ -29,7 +29,7 @@ const finalScoreEl = document.getElementById('final-score');
 const btnPlayAgain = document.getElementById('btn-play-again');
 
 let timer = null;
-let timeLeft = 60;
+let timeLeft = 300;
 let score = 0;
 
 /* Drag state */
