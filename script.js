@@ -82,11 +82,16 @@ function onPointerDown(e){
   lastPos.y = e.clientY;
 
   // clon
-  dragClone = draggingCard.cloneNode(true);
-  dragClone.classList.add('dragging-clone');
-  dragClone.style.width = rect.width + 'px';
-  dragClone.style.height = rect.height + 'px';
-  document.body.appendChild(dragClone);
+dragClone = draggingCard.cloneNode(true);
+dragClone.classList.add('dragging-clone');
+dragClone.style.width = rect.width + 'px';
+dragClone.style.height = rect.height + 'px';
+
+// posición inicial (justo donde clickeaste)
+dragClone.style.left = (e.clientX - pointerOffset.x) + 'px';
+dragClone.style.top  = (e.clientY - pointerOffset.y) + 'px';
+
+document.body.appendChild(dragClone);
 
   draggingCard.style.visibility = 'hidden';
 
