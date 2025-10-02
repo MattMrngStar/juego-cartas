@@ -3,30 +3,173 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ordena las Cartas</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Juego de Ordenar Cartas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f4f4f9;
+    }
+
+    h1 {
+      margin: 20px;
+    }
+
+    #game {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    /* Contenedor con marco */
+    .card-container {
+      width: 100px;
+      height: 150px;
+      border: 3px dashed #bbb;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: border-color 0.3s ease;
+      background: white;
+      box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .card-container.over {
+      border-color: #4CAF50;
+    }
+
+    .card {
+      width: 90px;
+      height: 140px;
+      object-fit: cover;
+      cursor: grab;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border-radius: 8px;
+    }
+
+    .card:active {
+      cursor: grabbing;
+    }
+
+    /* Animación al arrastrar */
+    .dragging {
+      transform: scale(1.1);
+      box-shadow: 0px 6px 12px rgba(0,0,0,0.25);
+      z-index: 1000;
+    }
+
+    #score, #timer {
+      margin: 15px;
+      font-size: 18px;
+    }
+  </style>
 </head>
 <body>
-  <div id="start-screen">
-    <h1>Ordena las Cartas</h1>
-    <button id="start-btn">Iniciar Juego</button>
-  </div>
+  <h1>Ordena las Cartas</h1>
+  <div id="score">Puntuación: 0</div>
+  <div id="timer">Tiempo: 60</div>
+  <div id="game"></div>
 
-  <div id="game-screen" class="hidden">
-    <div class="info">
-      <p>Tiempo: <span id="timer">60</span>s</p>
-      <p>Puntos: <span id="score">0</span></p>
-    </div>
-    <div id="game-board"></div>
-    <button id="check-btn">Validar Orden</button>
-  </div>
+  <script>
+    const game = document.getElementById("game");
+    const scoreDisplay = document.getElementById("score");
+    const timerDisplay = document.getElementById("timer");
 
-  <div id="end-screen" class="hidden">
-    <h2 id="result-msg"></h2>
-    <p>Puntaje final: <span id="final-score"></span></p>
-    <button id="restart-btn">Jugar de nuevo</button>
-  </div>
+    let score = 0;
+    let timeLeft = 60;
 
-  <script src="script.js"></script>
+    const cards = ["01","02","03","04","05","06","07"];
+    let shuffled = [...cards].sort(() => Math.random() - 0.5);
+
+    // Crear cartas con marco
+    shuffled.forEach(num => {
+      const container = document.createElement("div");
+      container.classList.add("card-container");
+
+      const img = document.createElement("img");
+      img.src = `Cartas/CartasPFE-${num}.png`;
+      img.classList.add("card");
+      img.draggable = true;
+      img.dataset.number = num;
+
+      container.appendChild(img);
+      game.appendChild(container);
+    });
+
+    let dragSrcEl = null;
+
+    function handleDragStart(e) {
+      dragSrcEl = this;
+      this.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/html", this.outerHTML);
+    }
+
+    function handleDragEnd() {
+      this.classList.remove("dragging");
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      this.classList.add("over");
+      e.dataTransfer.dropEffect = "move";
+    }
+
+    function handleDragLeave() {
+      this.classList.remove("over");
+    }
+
+    function handleDrop(e) {
+      e.stopPropagation();
+      if (dragSrcEl !== this) {
+        dragSrcEl.parentNode.innerHTML = this.outerHTML;
+        this.outerHTML = e.dataTransfer.getData("text/html");
+
+        addDnDHandlers(dragSrcEl.parentNode.querySelector(".card"));
+        addDnDHandlers(this.querySelector(".card"));
+
+        checkOrder();
+      }
+      this.classList.remove("over");
+      return false;
+    }
+
+    function addDnDHandlers(card) {
+      card.addEventListener("dragstart", handleDragStart);
+      card.addEventListener("dragend", handleDragEnd);
+      card.parentNode.addEventListener("dragover", handleDragOver);
+      card.parentNode.addEventListener("dragleave", handleDragLeave);
+      card.parentNode.addEventListener("drop", handleDrop);
+    }
+
+    document.querySelectorAll(".card").forEach(addDnDHandlers);
+
+    function checkOrder() {
+      const currentOrder = Array.from(document.querySelectorAll(".card"))
+        .map(c => c.dataset.number);
+
+      if (JSON.stringify(currentOrder) === JSON.stringify(cards)) {
+        score += 10;
+        scoreDisplay.textContent = "Puntuación: " + score;
+        alert("¡Correcto! 🎉");
+      }
+    }
+
+    function startTimer() {
+      let timer = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = "Tiempo: " + timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          alert("¡Se acabó el tiempo!");
+        }
+      }, 1000);
+    }
+
+    startTimer();
+  </script>
 </body>
 </html>
