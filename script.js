@@ -17,7 +17,15 @@ let score = 0;
 let timer;
 let dragged;
 
-const correctOrder = ["01.png","02.png","03.png","04.png","05.png","06.png","07.png"];
+const correctOrder = [
+  "CartasPFE-01.png",
+  "CartasPFE-02.png",
+  "CartasPFE-03.png",
+  "CartasPFE-04.png",
+  "CartasPFE-05.png",
+  "CartasPFE-06.png",
+  "CartasPFE-07.png"
+];
 
 function startGame() {
   startScreen.classList.add("hidden");
@@ -40,7 +48,7 @@ function startGame() {
     card.dataset.image = imgName;
 
     let img = document.createElement("img");
-    img.src = "img/" + imgName;
+    img.src = "Cartas/" + imgName; // ✅ Ajuste de ruta
 
     card.appendChild(img);
     gameBoard.appendChild(card);
