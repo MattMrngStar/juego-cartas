@@ -67,4 +67,96 @@ body{
 
 /* HUD */
 .hud{width:min(900px,96%); display:flex; justify-content:space-between; gap:12px; margin:10px auto 16px; font-weight:600}
-#game-area{width:min(960px,98%); display:flex; flex-direction:column; align-items:cente
+#game-area{width:min(960px,98%); display:flex; flex-direction:column; align-items:center}
+
+/* BOARD: slots fijos, responsive */
+#board{
+  width:min(980px,100%);
+  display:grid;
+  gap:var(--gap);
+  grid-template-columns: repeat(7, minmax(80px, 1fr));
+  justify-items:center;
+  padding:14px;
+  background:linear-gradient(180deg,#fff,#f8fbff);
+  border-radius:12px;
+  box-shadow:0 12px 30px rgba(12,30,60,0.04);
+}
+
+/* SLOT fijo (línea punteada) */
+.slot{
+  width:100%;
+  max-width: var(--slot-w);
+  aspect-ratio: calc(var(--slot-w) / var(--slot-h));
+  min-width:64px;
+  border-radius:10px;
+  border: 3px dashed #c7cfdb;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#ffffff;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  position:relative;
+  overflow:hidden;
+}
+.slot.over{ border-color: var(--ok); transform: translateY(-6px); box-shadow: 0 14px 40px rgba(49,178,106,0.07) }
+
+/* CARD (imagen en el slot) */
+.card{
+  width:92%;
+  height:92%;
+  object-fit:cover;
+  border-radius:8px;
+  user-select:none;
+  touch-action:none; /* importante para pointer events en móvil */
+  transition: transform .12s ease;
+  display:block;
+}
+.card.dragging{
+  transform: scale(1.06);
+  opacity:0.95;
+}
+
+/* CLON que sigue al puntero */
+.dragging-clone{
+  position: fixed !important;
+  left:0; top:0;
+  width: auto; height: auto;
+  z-index: 9999;
+  pointer-events: none;
+  will-change: transform, left, top;
+  border-radius:8px;
+  box-shadow: 0 18px 46px rgba(10,20,40,0.32);
+  transform-origin:center;
+}
+
+/* CONTROLS */
+.controls{display:flex; gap:12px; margin-top:16px}
+button{
+  border: none;
+  padding:10px 14px;
+  border-radius:10px;
+  background:var(--accent);
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+}
+button.secondary{ background:#6b7280 }
+
+/* END SCREEN small */
+#end-screen .start-inner{max-width:380px}
+
+/* Hidden helper */
+.hidden{display:none}
+
+/* Responsive adjustments */
+@media (max-width:720px){
+  :root{ --slot-w: 86px; --slot-h: 120px; --gap:10px }
+  .demo-card{ width:66px; height:96px }
+  .start-inner h1{ font-size:20px }
+  .hud{ flex-direction:row; gap:8px; font-size:14px }
+}
+@media (max-width:420px){
+  #board{ grid-template-columns: repeat(4, minmax(64px, 1fr)); }
+  .demo-card{ width:56px; height:82px }
+}
+
