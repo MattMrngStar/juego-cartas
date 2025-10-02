@@ -6,175 +6,142 @@
   --ok: #31b26a;
 }
 
-/* Reset básico */
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-  background: linear-gradient(180deg,#f6f8fb,#eef4ff);
-  color:#1f2937;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
+/* ---------------------------
+   Estilos generales
+   --------------------------- */
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  color: #333;
+  text-align: center;
 }
 
-/* Overlays (inicio / final) */
-.overlay{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(245,247,255,0.9));
-  z-index:80;
+.hidden {
+  display: none !important;
 }
-.start-inner{
-  width:min(640px,94%);
-  padding:22px;
-  border-radius:14px;
-  background:linear-gradient(180deg,#ffffff,#fbfdff);
-  box-shadow: 0 10px 30px rgba(12,30,60,0.08);
-  text-align:center;
-}
-.start-inner h1{margin:2px 0 8px; font-size:22px}
-.start-inner p{margin:0 0 14px; color:#334155}
-.start-actions{margin-top:12px}
-.hint{display:block;margin-top:10px;color:#6b7280;font-size:13px}
 
-/* Demo cards (pantalla inicio) */
-#demo-cards{display:flex; gap:18px; justify-content:center; margin-top:12px}
-.demo-card{
-  width:82px; height:118px; object-fit:cover; border-radius:8px;
-  transform-origin:center;
-  animation: float 4.4s ease-in-out infinite, flipY 2.6s linear infinite;
-  animation-delay: var(--delay, 0s);
-  opacity:0.95;
+.overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(255,255,255,0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 1000;
 }
-@keyframes float{
-  0%{transform: translateY(0)}
-  50%{transform: translateY(-16px)}
-  100%{transform: translateY(0)}
+
+.start-inner {
+  max-width: 500px;
 }
-@keyframes flipY{
-  0%{transform: rotateY(0deg)}
-  50%{transform: rotateY(180deg)}
-  100%{transform: rotateY(360deg)}
+
+.start-actions {
+  margin-top: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #4CAF50;
+  color: white;
+}
+
+button.secondary {
+  background: #555;
 }
 
 /* HUD */
-.hud{width:min(900px,96%); display:flex; justify-content:space-between; gap:12px; margin:10px auto 16px; font-weight:600}
-#game-area{width:min(960px,98%); display:flex; flex-direction:column; align-items:center}
-
-/* BOARD: slots fijos, responsive */
-#board{
-  width:min(980px,100%);
-  display:grid;
-  gap:var(--gap);
-  grid-template-columns: repeat(7, minmax(80px, 1fr));
-  justify-items:center;
-  padding:14px;
-  background:linear-gradient(180deg,#fff,#f8fbff);
-  border-radius:12px;
-  box-shadow:0 12px 30px rgba(12,30,60,0.04);
-}
-
-/* SLOT fijo (línea punteada) */
-.slot{
-  width:100%;
-  max-width: var(--slot-w);
-  aspect-ratio: calc(var(--slot-w) / var(--slot-h));
-  min-width:64px;
-  border-radius:10px;
-  border: 3px dashed #c7cfdb;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#ffffff;
-  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
-  position:relative;
-  overflow:hidden;
-}
-.slot.over{ border-color: var(--ok); transform: translateY(-6px); box-shadow: 0 14px 40px rgba(49,178,106,0.07) }
-
-/* CARD (imagen en el slot) */
-.card{
-  width:92%;
-  height:92%;
-  object-fit:cover;
-  border-radius:8px;
-  user-select:none;
-  touch-action:none; /* importante para pointer events en móvil */
-  transition: transform .12s ease;
-  display:block;
-}
-.card.dragging{
-  transform: scale(1.06);
-  opacity:0.95;
-}
-
-/* CLON que sigue al puntero */
-.dragging-clone{
-  position: fixed !important;
-  left:0; top:0;
-  width: auto; height: auto;
-  z-index: 9999;
-  pointer-events: none;
-  will-change: transform, left, top;
-  border-radius:8px;
-  box-shadow: 0 18px 46px rgba(10,20,40,0.32);
-  transform-origin:center;
-}
-
-/* CONTROLS */
-.controls{display:flex; gap:12px; margin-top:16px}
-button{
-  border: none;
-  padding:10px 14px;
-  border-radius:10px;
-  background:var(--accent);
-  color:white;
-  font-weight:700;
-  cursor:pointer;
-}
-button.secondary{ background:#6b7280 }
-
-/* END SCREEN small */
-#end-screen .start-inner{max-width:380px}
-
-/* Hidden helper */
-.hidden{display:none}
-
-/* Responsive adjustments */
-@media (max-width:720px){
-  :root{ --slot-w: 86px; --slot-h: 120px; --gap:10px }
-  .demo-card{ width:66px; height:96px }
-  .start-inner h1{ font-size:20px }
-  .hud{ flex-direction:row; gap:8px; font-size:14px }
-}
-@media (max-width:420px){
-  #board{ grid-template-columns: repeat(4, minmax(64px, 1fr)); }
-  .demo-card{ width:56px; height:82px }
-}
-/* Contenedor que incluye número y slot */
-.slot-container {
+.hud {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
+  justify-content: space-between;
+  padding: 10px 20px;
+  font-size: 18px;
+  background: #fff;
+  border-bottom: 2px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 500;
 }
 
-/* Número de posición */
-.slot-number {
-  font-size: 18px;
+/* Tablero */
+#board {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  padding: 20px;
+  max-width: 95vw;
+  margin: auto;
+}
+
+.slot {
+  border: 2px dashed #aaa;
+  min-height: 140px;
+  background: #fafafa;
+  border-radius: 10px;
+  position: relative;
+}
+
+.slot.over {
+  border-color: #4CAF50;
+  background: #eaffea;
+}
+
+.slot::before {
+  content: attr(data-slot);
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
   font-weight: bold;
   color: #444;
-  background: #f0f0f0;
-  padding: 4px 8px;
-  border-radius: 8px;
-  user-select: none;
 }
 
+.card {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+/* Clone arrastrado */
+.dragging-clone {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+}
+
+/* Footer */
+.controls {
+  padding: 20px;
+}
+
+@media (max-width: 768px) {
+  #board {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .slot {
+    min-height: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  #board {
+    grid-template-columns: 1fr;
+  }
+  .slot {
+    min-height: 100px;
+  }
+}
