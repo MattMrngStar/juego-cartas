@@ -159,4 +159,22 @@ button.secondary{ background:#6b7280 }
   #board{ grid-template-columns: repeat(4, minmax(64px, 1fr)); }
   .demo-card{ width:56px; height:82px }
 }
+/* Contenedor que incluye número y slot */
+.slot-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Número de posición */
+.slot-number {
+  font-size: 18px;
+  font-weight: bold;
+  color: #444;
+  background: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 8px;
+  user-select: none;
+}
 
