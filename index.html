@@ -1,37 +1,68 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Juego de Ordenar Cartas</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ordena las Cartas</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Pantalla de inicio -->
-  <div id="start-screen">
-    <h1>Juego de Cartas</h1>
-    <p>Arrastra las cartas a las posiciones correctas.</p>
-    <button id="start-btn">Comenzar</button>
-    <div class="card-animation">
-      <img src="images/back-08.png" class="animated-card" />
-      <img src="images/back-08.png" class="animated-card" />
-      <img src="images/back-08.png" class="animated-card" />
+  <!-- PANTALLA DE INICIO -->
+  <div id="start-screen" class="overlay">
+    <div class="start-inner">
+      <h1>Ordena las Cartas</h1>
+      <p>Arrastra las cartas y colócalas en el orden correcto: <strong>01 → 07</strong>.  
+         Hazlo antes de que se acabe el tiempo. ¡Buena suerte!</p>
+      <div id="demo-cards" aria-hidden="true">
+        <!-- 3 cartas de demostración (reverso) -->
+        <img class="demo-card" src="Cartas/CartasPFE-08.png" style="--delay:0s" alt="reverso">
+        <img class="demo-card" src="Cartas/CartasPFE-08.png" style="--delay:0.45s" alt="reverso">
+        <img class="demo-card" src="Cartas/CartasPFE-08.png" style="--delay:0.9s" alt="reverso">
+      </div>
+
+      <div class="start-actions">
+        <button id="btn-start">Iniciar Juego</button>
+      </div>
+      <small class="hint">Las animaciones son decorativas — las instrucciones son lo principal.</small>
     </div>
   </div>
 
-  <!-- Tablero de juego (oculto al inicio) -->
-  <div id="game-board" style="display:none;">
-    <div class="drop-zone" id="slot1"></div>
-    <div class="drop-zone" id="slot2"></div>
-    <div class="drop-zone" id="slot3"></div>
+  <!-- ÁREA DE JUEGO -->
+  <main id="game-area" class="hidden" role="main" aria-label="Juego de ordenar cartas">
+    <header class="hud">
+      <div>Tiempo: <span id="timer">60</span>s</div>
+      <div>Puntos: <span id="score">0</span></div>
+    </header>
 
-    <div class="cards">
-      <img src="images/card1.png" class="card" draggable="true" />
-      <img src="images/card2.png" class="card" draggable="true" />
-      <img src="images/card3.png" class="card" draggable="true" />
+    <!-- TABLERO: slots fijos -->
+    <section id="board" aria-label="Tablero de 7 slots">
+      <!-- 7 slots fijos -->
+      <div class="slot" data-slot="0" aria-label="Slot 1"></div>
+      <div class="slot" data-slot="1" aria-label="Slot 2"></div>
+      <div class="slot" data-slot="2" aria-label="Slot 3"></div>
+      <div class="slot" data-slot="3" aria-label="Slot 4"></div>
+      <div class="slot" data-slot="4" aria-label="Slot 5"></div>
+      <div class="slot" data-slot="5" aria-label="Slot 6"></div>
+      <div class="slot" data-slot="6" aria-label="Slot 7"></div>
+    </section>
+
+    <footer class="controls">
+      <button id="btn-check" class="secondary">Validar Orden</button>
+      <button id="btn-restart" class="secondary">Reiniciar</button>
+    </footer>
+  </main>
+
+  <!-- PANTALLA FINAL -->
+  <div id="end-screen" class="overlay hidden">
+    <div class="start-inner">
+      <h2 id="result-title">Resultado</h2>
+      <p>Puntuación: <strong id="final-score">0</strong></p>
+      <div class="start-actions">
+        <button id="btn-play-again">Jugar de nuevo</button>
+      </div>
     </div>
   </div>
 
   <script src="script.js"></script>
 </body>
-
 </html>
