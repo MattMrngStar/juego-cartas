@@ -37,7 +37,7 @@ function startGame() {
   timerEl.textContent = timeLeft;
   scoreEl.textContent = score;
 
-  // Mezclar las cartas
+  // Mezclar cartas
   let shuffled = [...correctOrder].sort(() => Math.random() - 0.5);
 
   gameBoard.innerHTML = "";
@@ -48,7 +48,7 @@ function startGame() {
     card.dataset.image = imgName;
 
     let img = document.createElement("img");
-    img.src = "Cartas/" + imgName; // ✅ Ajuste de ruta
+    img.src = "Cartas/" + imgName;
 
     card.appendChild(img);
     gameBoard.appendChild(card);
@@ -59,11 +59,16 @@ function startGame() {
 }
 
 function enableDragDrop() {
-  const cards = document.querySelectorAll(".card");
+  const cards = document.querySelectorAll("#game-board .card");
 
   cards.forEach(card => {
     card.addEventListener("dragstart", e => {
       dragged = card;
+      card.classList.add("dragging");
+    });
+
+    card.addEventListener("dragend", e => {
+      card.classList.remove("dragging");
     });
 
     card.addEventListener("dragover", e => {
@@ -99,10 +104,11 @@ function startTimer() {
 }
 
 function checkOrder() {
-  const currentOrder = Array.from(document.querySelectorAll(".card")).map(c => c.dataset.image);
+  const currentOrder = Array.from(document.querySelectorAll("#game-board .card"))
+    .map(c => c.dataset.image);
 
   if (JSON.stringify(currentOrder) === JSON.stringify(correctOrder)) {
-    let bonus = timeLeft * 10; 
+    let bonus = timeLeft * 10;
     score = 1000 + bonus;
     scoreEl.textContent = score;
     endGame(true);
