@@ -56,7 +56,7 @@ body{
 
 /* HUD */
 #game-area{ width:min(980px,98%); display:flex; flex-direction:column; align-items:center }
-.hud{ width:100%; display:flex; justify-content:space-between; gap:12px; font-weight:700; margin-bottom:12px }
+.hud{ width:100%; display:flex; justify-content:center; gap:12px; font-weight:700; margin-bottom:12px }
 
 /* BOARD (grid de slot-containers) */
 #board{
