@@ -175,7 +175,7 @@ function onPointerUp(e){
 /* --- Juego: timer, start, check, restart --- */
 function startTimer(){
   clearInterval(timer);
-  timeLeft = 60;
+  timeLeft = 300;
   timerEl.textContent = timeLeft;
   timer = setInterval(()=>{
     timeLeft--;
