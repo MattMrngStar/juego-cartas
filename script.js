@@ -217,7 +217,7 @@ function restartGame(){
   placeShuffledCards();
   score = 0; scoreEl.textContent = score;
   clearInterval(timer);
-  timeLeft = 60; timerEl.textContent = timeLeft;
+  timeLeft = 300; timerEl.textContent = timeLeft;
   startTimer();
   endScreen.classList.add('hidden');
   gameArea.classList.remove('hidden');
