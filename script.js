@@ -179,12 +179,23 @@ function startTimer(){
 
 function startGame(){
   placeShuffledCards();
-  score = 0; scoreEl.textContent = score;
+  score = 0; 
+  scoreEl.textContent = score;
+
+  // mostrar zona de juego
   startScreen.classList.add('hidden');
   gameArea.classList.remove('hidden');
   endScreen.classList.add('hidden');
+
+  // iniciar timer
   startTimer();
+
+  // reproducir música
+  const music = document.getElementById('bg-music');
+  music.volume = 0.3; // volumen suave
+  music.play().catch(err => console.log("No se pudo reproducir automáticamente:", err));
 }
+
 
 function checkOrder(){
   const current = slots.map(s => s.querySelector('.card')?.dataset.image || null);
