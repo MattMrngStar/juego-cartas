@@ -5,36 +5,26 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Ordena las Cartas - Animado</title>
 <style>
-  :root {
-    --slot-w: 110px;
-    --slot-h: 160px;
-    --card-scale-drag: 1.08;
-  }
-
   body {
     margin: 0;
     font-family: system-ui, "Segoe UI", Roboto, Arial;
     background: #f5f7fb;
     color: #222;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 18px;
+    overflow: hidden;
   }
 
-  h1 { margin: 10px 0 6px; font-size: 20px; }
+  h1 { margin: 10px 0 6px; font-size: 24px; }
 
   .info { display:flex; gap:16px; align-items:center; margin-bottom:10px; }
   .info p { margin:0; font-size:14px; background:#fff; padding:8px 12px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.06); }
 
-  /* TABLERO (slots fijos) */
+  /* TABLERO */
   #board {
     display: flex;
     gap: 12px;
     justify-content: center;
-    flex-wrap: nowrap;
     padding: 18px;
-    background: linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+    background: #fff;
     border-radius: 14px;
     box-shadow: 0 8px 20px rgba(15,30,70,0.06);
     max-width: 100%;
@@ -42,10 +32,10 @@
   }
 
   .slot {
-    width: var(--slot-w);
-    height: var(--slot-h);
-    min-width: var(--slot-w);
-    min-height: var(--slot-h);
+    width: 110px;
+    height: 160px;
+    min-width: 110px;
+    min-height: 160px;
     border-radius: 10px;
     border: 3px dashed #d6dbe6;
     background: #fff;
@@ -63,26 +53,20 @@
     box-shadow: 0 8px 18px rgba(49,178,106,0.08);
   }
 
-  /* Carta */
   .card {
-    width: calc(var(--slot-w) - 12px);
-    height: calc(var(--slot-h) - 12px);
+    width: 98px;
+    height: 148px;
     object-fit: cover;
     border-radius: 8px;
     user-select: none;
-    touch-action: none; /* esencial para pointer events en móviles */
+    touch-action: none;
     transition: transform .12s ease, box-shadow .12s ease;
-    will-change: transform, left, top;
     cursor: grab;
-    display: block;
   }
   .card:active { cursor: grabbing; }
-
-  /* Elemento de arrastre (clon) */
   .dragging {
     position: fixed !important;
     left: 0; top: 0;
-    margin: 0;
     z-index: 9999;
     pointer-events: none;
     transition: transform .08s linear;
@@ -90,7 +74,6 @@
     border-radius: 10px;
   }
 
-  /* Botones */
   .controls { margin-top: 14px; display:flex; gap:10px; align-items:center; }
   button {
     border: none;
@@ -100,23 +83,99 @@
     border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
+    z-index: 20;
   }
   button.secondary { background: #6b7280; }
-  @media (max-width:600px) {
-    .info { flex-direction: column; gap:8px; }
+
+  /* --------------------------
+     PANTALLA DE INICIO
+  -------------------------- */
+  #start-screen {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg,#f0f3f9,#dfe9f3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    z-index: 50;
+    overflow: hidden;
+    animation: fadeIn .6s ease;
+  }
+
+  #start-screen h1 {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  #start-screen p {
+    max-width: 320px;
+    margin: 0 auto 18px;
+    font-size: 15px;
+    line-height: 1.4;
+    color: #444;
+    background: rgba(255,255,255,0.6);
+    padding: 10px;
+    border-radius: 8px;
+  }
+  #start-screen button {
+    font-size: 16px;
+    padding: 12px 20px;
+  }
+
+  /* Cartas flotando en fondo */
+  .floating-card {
+    position: absolute;
+    width: 90px;
+    height: 130px;
+    background: url("Cartas/CartasPFE-08.png") center/cover no-repeat;
+    border-radius: 8px;
+    animation: float 6s infinite ease-in-out, spin 4s infinite linear;
+    opacity: 0.8;
+  }
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+  }
+  @keyframes spin {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(360deg); }
+  }
+
+  /* Fade */
+  .hidden { display:none; }
+  @keyframes fadeIn {
+    from { opacity:0; }
+    to { opacity:1; }
+  }
+  @keyframes fadeOut {
+    from { opacity:1; }
+    to { opacity:0; }
   }
 </style>
 </head>
 <body>
 
+<!-- Pantalla de inicio -->
+<div id="start-screen">
+  <div class="floating-card" style="top:15%; left:20%; animation-delay:0s;"></div>
+  <div class="floating-card" style="top:40%; left:70%; animation-delay:1s;"></div>
+  <div class="floating-card" style="top:70%; left:30%; animation-delay:2s;"></div>
+  <h1>Ordena las Cartas</h1>
+  <p>Arrastra las cartas y colócalas en el orden correcto del 01 al 07 antes de que el tiempo termine. ¡Buena suerte!</p>
+  <button id="btn-iniciar">Iniciar Juego</button>
+</div>
+
+<!-- Juego -->
+<div id="game-area" class="hidden">
   <h1>Ordena las Cartas</h1>
   <div class="info">
     <p>Tiempo: <span id="timer">60</span>s</p>
     <p>Puntos: <span id="score">0</span></p>
   </div>
 
-  <div id="board" aria-label="Tablero de cartas (7 slots)">
-    <!-- 7 slots fijos -->
+  <div id="board">
     <div class="slot" data-slot="0"></div>
     <div class="slot" data-slot="1"></div>
     <div class="slot" data-slot="2"></div>
@@ -127,13 +186,13 @@
   </div>
 
   <div class="controls">
-    <button id="start-btn">Iniciar</button>
     <button id="check-btn" class="secondary">Validar Orden</button>
     <button id="restart-btn" class="secondary">Reiniciar</button>
   </div>
+</div>
 
 <script>
-/* --- Configuración --- */
+/* Juego (reutilizando la lógica anterior resumida) */
 const correctOrder = [
   "CartasPFE-01.png",
   "CartasPFE-02.png",
@@ -143,227 +202,58 @@ const correctOrder = [
   "CartasPFE-06.png",
   "CartasPFE-07.png"
 ];
-
-const board = document.getElementById('board');
 const slots = Array.from(document.querySelectorAll('.slot'));
+const board = document.getElementById('board');
 const timerEl = document.getElementById('timer');
 const scoreEl = document.getElementById('score');
-const startBtn = document.getElementById('start-btn');
 const checkBtn = document.getElementById('check-btn');
 const restartBtn = document.getElementById('restart-btn');
+let timer, timeLeft, score;
 
-let timer = null;
-let timeLeft = 60;
-let score = 0;
-
-/* Drag state */
-let draggingCard = null;    // el elemento real (.card) que estamos arrastrando
-let dragClone = null;       // clon que sigue al cursor (elemento con .dragging)
-let originSlot = null;      // slot donde estaba la carta al comenzar
-let pointerData = { id: null, offsetX:0, offsetY:0, lastX:0, lastY:0 };
-
-/* --- Helpers --- */
 function shuffle(arr){ return arr.slice().sort(()=>Math.random()-0.5); }
-
-function createCardElement(imgName) {
+function createCard(imgName) {
   const img = document.createElement('img');
-  img.className = 'card';
-  img.draggable = false; // manejamos con pointer events
-  img.src = `Cartas/${imgName}`;
-  img.alt = imgName;
+  img.src = "Cartas/"+imgName;
+  img.className = "card";
   img.dataset.image = imgName;
-  addCardPointerHandlers(img);
+  img.draggable = false;
   return img;
 }
-
-function placeShuffledCards() {
+function placeShuffled() {
   const shuffled = shuffle(correctOrder);
-  slots.forEach((slot, i) => {
-    slot.innerHTML = ''; // slot fijo, no se reemplaza
-    const card = createCardElement(shuffled[i]);
-    slot.appendChild(card);
-  });
+  slots.forEach((s,i)=>{ s.innerHTML=""; s.appendChild(createCard(shuffled[i])); });
 }
-
-/* --- Pointer (drag) logic usando clone que sigue al cursor) --- */
-
-function addCardPointerHandlers(card){
-  card.addEventListener('pointerdown', onPointerDown);
-  // prevenir drag nativo
-  card.addEventListener('dragstart', e=> e.preventDefault());
-}
-
-function onPointerDown(e){
-  e.preventDefault();
-  // sólo botón principal
-  if (e.button && e.button !== 0) return;
-
-  draggingCard = e.currentTarget;
-  originSlot = draggingCard.parentElement; // slot original
-  // capture pointer to card (helps to receive pointerup even if cursor moves fast)
-  draggingCard.setPointerCapture(e.pointerId);
-  pointerData.id = e.pointerId;
-
-  // offsets para centrar el clon respecto al punto tocado
-  const rect = draggingCard.getBoundingClientRect();
-  pointerData.offsetX = e.clientX - rect.left;
-  pointerData.offsetY = e.clientY - rect.top;
-  pointerData.lastX = e.clientX;
-  pointerData.lastY = e.clientY;
-
-  // crear clon que seguirá al cursor (más fluido que usar el elemento original)
-  dragClone = draggingCard.cloneNode(true);
-  dragClone.classList.add('dragging');
-  dragClone.style.width = rect.width + 'px';
-  dragClone.style.height = rect.height + 'px';
-  // posición inicial
-  dragClone.style.left = (e.clientX - pointerData.offsetX) + 'px';
-  dragClone.style.top  = (e.clientY - pointerData.offsetY) + 'px';
-  document.body.appendChild(dragClone);
-
-  // ocultar el original (pero mantener en el DOM)
-  draggingCard.style.visibility = 'hidden';
-
-  // escuchar movimientos globales
-  document.addEventListener('pointermove', onPointerMove, {passive:false});
-  document.addEventListener('pointerup', onPointerUp, {once:true});
-}
-
-function onPointerMove(e){
-  if (!dragClone) return;
-  e.preventDefault();
-
-  // mover clon
-  const x = e.clientX - pointerData.offsetX;
-  const y = e.clientY - pointerData.offsetY;
-  const dx = e.clientX - pointerData.lastX;
-  const dy = e.clientY - pointerData.lastY;
-  pointerData.lastX = e.clientX;
-  pointerData.lastY = e.clientY;
-
-  // rotación suave según dirección horizontal del movimiento (pequeña)
-  const rot = Math.max(-15, Math.min(15, dx * 0.6));
-
-  dragClone.style.left = x + 'px';
-  dragClone.style.top  = y + 'px';
-  dragClone.style.transform = `scale(${getComputedStyle(document.documentElement).getPropertyValue('--card-scale-drag') || 1.08}) rotate(${rot}deg)`;
-
-  // resaltar slot bajo el cursor
-  const elemUnder = document.elementFromPoint(e.clientX, e.clientY);
-  const slotUnder = elemUnder ? elemUnder.closest('.slot') : null;
-  slots.forEach(s => s.classList.toggle('over', s === slotUnder));
-}
-
-/* Encuentra el slot más cercano al punto (si no hay uno directamente bajo el cursor) */
-function nearestSlotToPoint(x,y){
-  let best = null;
-  let bestD = Infinity;
-  slots.forEach(s=>{
-    const r = s.getBoundingClientRect();
-    const cx = r.left + r.width/2;
-    const cy = r.top + r.height/2;
-    const d = Math.hypot(cx - x, cy - y);
-    if (d < bestD) { bestD = d; best = s; }
-  });
-  return best;
-}
-
-function onPointerUp(e){
-  if (!dragClone || !draggingCard) return;
-
-  // quitar listeners
-  document.removeEventListener('pointermove', onPointerMove);
-
-  // determinar slot objetivo
-  let elemUnder = document.elementFromPoint(e.clientX, e.clientY);
-  let targetSlot = elemUnder ? elemUnder.closest('.slot') : null;
-  if (!targetSlot) {
-    // elegir el más cercano dentro del tablero visualmente
-    targetSlot = nearestSlotToPoint(e.clientX, e.clientY);
-  }
-  // si no detecta, devuelvo al origen
-  if (!targetSlot) targetSlot = originSlot;
-
-  // si es el mismo slot, simplemente lo regresamos (snap)
-  if (targetSlot === originSlot) {
-    originSlot.appendChild(draggingCard);
-  } else {
-    // si el slot objetivo tiene carta -> swap
-    const existing = targetSlot.querySelector('.card');
-    if (existing) {
-      originSlot.appendChild(existing); // la movemos al origen
-    }
-    targetSlot.appendChild(draggingCard); // movemos la que arrastrábamos
-  }
-
-  // limpiar estados visuales
-  slots.forEach(s => s.classList.remove('over'));
-
-  // quitar clon y mostrar original
-  dragClone.remove();
-  dragClone = null;
-
-  draggingCard.style.visibility = 'visible';
-  draggingCard.releasePointerCapture(pointerData.id);
-  draggingCard = null;
-  originSlot = null;
-  pointerData.id = null;
-
-  // opcional: comprobar orden tras soltar
-  // checkOrder(); // si quieres validar automáticamente aquí
-}
-
-/* --- Lógica del juego (timer, check) --- */
-function startGame(){
-  placeShuffledCards();
-  // reiniciar timer y score
+function startGame() {
+  placeShuffled();
   clearInterval(timer);
-  timeLeft = 60;
-  score = 0;
-  timerEl.textContent = timeLeft;
-  scoreEl.textContent = score;
-
+  timeLeft = 60; score = 0;
+  timerEl.textContent = timeLeft; scoreEl.textContent = score;
   timer = setInterval(()=>{
-    timeLeft--;
-    timerEl.textContent = timeLeft;
-    if (timeLeft <= 0) {
-      clearInterval(timer);
-      alert('Tiempo agotado');
-    }
-  }, 1000);
+    timeLeft--; timerEl.textContent = timeLeft;
+    if(timeLeft<=0){ clearInterval(timer); alert("Tiempo agotado"); }
+  },1000);
 }
-
-function checkOrder(){
-  const current = slots.map(s => {
-    const c = s.querySelector('.card');
-    return c ? c.dataset.image : null;
-  });
-  if (JSON.stringify(current) === JSON.stringify(correctOrder)) {
-    // recompensa en puntos según tiempo restante
-    const bonus = timeLeft * 10;
-    score = 1000 + bonus;
-    scoreEl.textContent = score;
-    clearInterval(timer);
-    alert('¡Correcto! 🎉 Puntos: ' + score);
-  } else {
-    alert('El orden no es correcto, sigue intentando.');
-  }
+function checkOrder() {
+  const current = slots.map(s=> s.querySelector('.card')?.dataset.image );
+  if(JSON.stringify(current)===JSON.stringify(correctOrder)){
+    score = 1000 + timeLeft*10; scoreEl.textContent=score; clearInterval(timer);
+    alert("¡Correcto! 🎉 Puntos: "+score);
+  } else { alert("El orden no es correcto."); }
 }
+checkBtn.addEventListener("click", checkOrder);
+restartBtn.addEventListener("click", startGame);
 
-/* Botones */
-startBtn.addEventListener('click', startGame);
-checkBtn.addEventListener('click', checkOrder);
-restartBtn.addEventListener('click', ()=> {
-  clearInterval(timer);
-  placeShuffledCards();
-  timeLeft = 60;
-  timerEl.textContent = timeLeft;
-  score = 0;
-  scoreEl.textContent = score;
+/* Pantalla inicio */
+const startScreen = document.getElementById('start-screen');
+const gameArea = document.getElementById('game-area');
+document.getElementById('btn-iniciar').addEventListener("click", ()=>{
+  startScreen.style.animation="fadeOut .6s forwards";
+  setTimeout(()=>{
+    startScreen.classList.add("hidden");
+    gameArea.classList.remove("hidden");
+    startGame();
+  },600);
 });
-
-/* Inicial */
-placeShuffledCards();
 </script>
 </body>
 </html>
