@@ -1,175 +1,370 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Juego de Ordenar Cartas</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #f4f4f9;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ordena las Cartas - Animado</title>
+<style>
+  :root {
+    --slot-w: 110px;
+    --slot-h: 160px;
+    --card-scale-drag: 1.08;
+  }
 
-    h1 {
-      margin: 20px;
-    }
+  body {
+    margin: 0;
+    font-family: system-ui, "Segoe UI", Roboto, Arial;
+    background: #f5f7fb;
+    color: #222;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 18px;
+  }
 
-    #game {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      flex-wrap: wrap;
-      margin-top: 30px;
-    }
+  h1 { margin: 10px 0 6px; font-size: 20px; }
 
-    /* Contenedor con marco */
-    .card-container {
-      width: 100px;
-      height: 150px;
-      border: 3px dashed #bbb;
-      border-radius: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: border-color 0.3s ease;
-      background: white;
-      box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
-    }
+  .info { display:flex; gap:16px; align-items:center; margin-bottom:10px; }
+  .info p { margin:0; font-size:14px; background:#fff; padding:8px 12px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.06); }
 
-    .card-container.over {
-      border-color: #4CAF50;
-    }
+  /* TABLERO (slots fijos) */
+  #board {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: nowrap;
+    padding: 18px;
+    background: linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(15,30,70,0.06);
+    max-width: 100%;
+    overflow-x: auto;
+  }
 
-    .card {
-      width: 90px;
-      height: 140px;
-      object-fit: cover;
-      cursor: grab;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      border-radius: 8px;
-    }
+  .slot {
+    width: var(--slot-w);
+    height: var(--slot-h);
+    min-width: var(--slot-w);
+    min-height: var(--slot-h);
+    border-radius: 10px;
+    border: 3px dashed #d6dbe6;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color .22s ease, transform .18s ease, box-shadow .18s ease;
+    position: relative;
+    flex: 0 0 auto;
+  }
 
-    .card:active {
-      cursor: grabbing;
-    }
+  .slot.over {
+    border-color: #31b26a;
+    transform: translateY(-6px);
+    box-shadow: 0 8px 18px rgba(49,178,106,0.08);
+  }
 
-    /* Animación al arrastrar */
-    .dragging {
-      transform: scale(1.1);
-      box-shadow: 0px 6px 12px rgba(0,0,0,0.25);
-      z-index: 1000;
-    }
+  /* Carta */
+  .card {
+    width: calc(var(--slot-w) - 12px);
+    height: calc(var(--slot-h) - 12px);
+    object-fit: cover;
+    border-radius: 8px;
+    user-select: none;
+    touch-action: none; /* esencial para pointer events en móviles */
+    transition: transform .12s ease, box-shadow .12s ease;
+    will-change: transform, left, top;
+    cursor: grab;
+    display: block;
+  }
+  .card:active { cursor: grabbing; }
 
-    #score, #timer {
-      margin: 15px;
-      font-size: 18px;
-    }
-  </style>
+  /* Elemento de arrastre (clon) */
+  .dragging {
+    position: fixed !important;
+    left: 0; top: 0;
+    margin: 0;
+    z-index: 9999;
+    pointer-events: none;
+    transition: transform .08s linear;
+    box-shadow: 0 18px 40px rgba(10,20,40,0.32);
+    border-radius: 10px;
+  }
+
+  /* Botones */
+  .controls { margin-top: 14px; display:flex; gap:10px; align-items:center; }
+  button {
+    border: none;
+    background: #2f80ed;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  button.secondary { background: #6b7280; }
+  @media (max-width:600px) {
+    .info { flex-direction: column; gap:8px; }
+  }
+</style>
 </head>
 <body>
+
   <h1>Ordena las Cartas</h1>
-  <div id="score">Puntuación: 0</div>
-  <div id="timer">Tiempo: 60</div>
-  <div id="game"></div>
+  <div class="info">
+    <p>Tiempo: <span id="timer">60</span>s</p>
+    <p>Puntos: <span id="score">0</span></p>
+  </div>
 
-  <script>
-    const game = document.getElementById("game");
-    const scoreDisplay = document.getElementById("score");
-    const timerDisplay = document.getElementById("timer");
+  <div id="board" aria-label="Tablero de cartas (7 slots)">
+    <!-- 7 slots fijos -->
+    <div class="slot" data-slot="0"></div>
+    <div class="slot" data-slot="1"></div>
+    <div class="slot" data-slot="2"></div>
+    <div class="slot" data-slot="3"></div>
+    <div class="slot" data-slot="4"></div>
+    <div class="slot" data-slot="5"></div>
+    <div class="slot" data-slot="6"></div>
+  </div>
 
-    let score = 0;
-    let timeLeft = 60;
+  <div class="controls">
+    <button id="start-btn">Iniciar</button>
+    <button id="check-btn" class="secondary">Validar Orden</button>
+    <button id="restart-btn" class="secondary">Reiniciar</button>
+  </div>
 
-    const cards = ["01","02","03","04","05","06","07"];
-    let shuffled = [...cards].sort(() => Math.random() - 0.5);
+<script>
+/* --- Configuración --- */
+const correctOrder = [
+  "CartasPFE-01.png",
+  "CartasPFE-02.png",
+  "CartasPFE-03.png",
+  "CartasPFE-04.png",
+  "CartasPFE-05.png",
+  "CartasPFE-06.png",
+  "CartasPFE-07.png"
+];
 
-    // Crear cartas con marco
-    shuffled.forEach(num => {
-      const container = document.createElement("div");
-      container.classList.add("card-container");
+const board = document.getElementById('board');
+const slots = Array.from(document.querySelectorAll('.slot'));
+const timerEl = document.getElementById('timer');
+const scoreEl = document.getElementById('score');
+const startBtn = document.getElementById('start-btn');
+const checkBtn = document.getElementById('check-btn');
+const restartBtn = document.getElementById('restart-btn');
 
-      const img = document.createElement("img");
-      img.src = `Cartas/CartasPFE-${num}.png`;
-      img.classList.add("card");
-      img.draggable = true;
-      img.dataset.number = num;
+let timer = null;
+let timeLeft = 60;
+let score = 0;
 
-      container.appendChild(img);
-      game.appendChild(container);
-    });
+/* Drag state */
+let draggingCard = null;    // el elemento real (.card) que estamos arrastrando
+let dragClone = null;       // clon que sigue al cursor (elemento con .dragging)
+let originSlot = null;      // slot donde estaba la carta al comenzar
+let pointerData = { id: null, offsetX:0, offsetY:0, lastX:0, lastY:0 };
 
-    let dragSrcEl = null;
+/* --- Helpers --- */
+function shuffle(arr){ return arr.slice().sort(()=>Math.random()-0.5); }
 
-    function handleDragStart(e) {
-      dragSrcEl = this;
-      this.classList.add("dragging");
-      e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.setData("text/html", this.outerHTML);
+function createCardElement(imgName) {
+  const img = document.createElement('img');
+  img.className = 'card';
+  img.draggable = false; // manejamos con pointer events
+  img.src = `Cartas/${imgName}`;
+  img.alt = imgName;
+  img.dataset.image = imgName;
+  addCardPointerHandlers(img);
+  return img;
+}
+
+function placeShuffledCards() {
+  const shuffled = shuffle(correctOrder);
+  slots.forEach((slot, i) => {
+    slot.innerHTML = ''; // slot fijo, no se reemplaza
+    const card = createCardElement(shuffled[i]);
+    slot.appendChild(card);
+  });
+}
+
+/* --- Pointer (drag) logic usando clone que sigue al cursor) --- */
+
+function addCardPointerHandlers(card){
+  card.addEventListener('pointerdown', onPointerDown);
+  // prevenir drag nativo
+  card.addEventListener('dragstart', e=> e.preventDefault());
+}
+
+function onPointerDown(e){
+  e.preventDefault();
+  // sólo botón principal
+  if (e.button && e.button !== 0) return;
+
+  draggingCard = e.currentTarget;
+  originSlot = draggingCard.parentElement; // slot original
+  // capture pointer to card (helps to receive pointerup even if cursor moves fast)
+  draggingCard.setPointerCapture(e.pointerId);
+  pointerData.id = e.pointerId;
+
+  // offsets para centrar el clon respecto al punto tocado
+  const rect = draggingCard.getBoundingClientRect();
+  pointerData.offsetX = e.clientX - rect.left;
+  pointerData.offsetY = e.clientY - rect.top;
+  pointerData.lastX = e.clientX;
+  pointerData.lastY = e.clientY;
+
+  // crear clon que seguirá al cursor (más fluido que usar el elemento original)
+  dragClone = draggingCard.cloneNode(true);
+  dragClone.classList.add('dragging');
+  dragClone.style.width = rect.width + 'px';
+  dragClone.style.height = rect.height + 'px';
+  // posición inicial
+  dragClone.style.left = (e.clientX - pointerData.offsetX) + 'px';
+  dragClone.style.top  = (e.clientY - pointerData.offsetY) + 'px';
+  document.body.appendChild(dragClone);
+
+  // ocultar el original (pero mantener en el DOM)
+  draggingCard.style.visibility = 'hidden';
+
+  // escuchar movimientos globales
+  document.addEventListener('pointermove', onPointerMove, {passive:false});
+  document.addEventListener('pointerup', onPointerUp, {once:true});
+}
+
+function onPointerMove(e){
+  if (!dragClone) return;
+  e.preventDefault();
+
+  // mover clon
+  const x = e.clientX - pointerData.offsetX;
+  const y = e.clientY - pointerData.offsetY;
+  const dx = e.clientX - pointerData.lastX;
+  const dy = e.clientY - pointerData.lastY;
+  pointerData.lastX = e.clientX;
+  pointerData.lastY = e.clientY;
+
+  // rotación suave según dirección horizontal del movimiento (pequeña)
+  const rot = Math.max(-15, Math.min(15, dx * 0.6));
+
+  dragClone.style.left = x + 'px';
+  dragClone.style.top  = y + 'px';
+  dragClone.style.transform = `scale(${getComputedStyle(document.documentElement).getPropertyValue('--card-scale-drag') || 1.08}) rotate(${rot}deg)`;
+
+  // resaltar slot bajo el cursor
+  const elemUnder = document.elementFromPoint(e.clientX, e.clientY);
+  const slotUnder = elemUnder ? elemUnder.closest('.slot') : null;
+  slots.forEach(s => s.classList.toggle('over', s === slotUnder));
+}
+
+/* Encuentra el slot más cercano al punto (si no hay uno directamente bajo el cursor) */
+function nearestSlotToPoint(x,y){
+  let best = null;
+  let bestD = Infinity;
+  slots.forEach(s=>{
+    const r = s.getBoundingClientRect();
+    const cx = r.left + r.width/2;
+    const cy = r.top + r.height/2;
+    const d = Math.hypot(cx - x, cy - y);
+    if (d < bestD) { bestD = d; best = s; }
+  });
+  return best;
+}
+
+function onPointerUp(e){
+  if (!dragClone || !draggingCard) return;
+
+  // quitar listeners
+  document.removeEventListener('pointermove', onPointerMove);
+
+  // determinar slot objetivo
+  let elemUnder = document.elementFromPoint(e.clientX, e.clientY);
+  let targetSlot = elemUnder ? elemUnder.closest('.slot') : null;
+  if (!targetSlot) {
+    // elegir el más cercano dentro del tablero visualmente
+    targetSlot = nearestSlotToPoint(e.clientX, e.clientY);
+  }
+  // si no detecta, devuelvo al origen
+  if (!targetSlot) targetSlot = originSlot;
+
+  // si es el mismo slot, simplemente lo regresamos (snap)
+  if (targetSlot === originSlot) {
+    originSlot.appendChild(draggingCard);
+  } else {
+    // si el slot objetivo tiene carta -> swap
+    const existing = targetSlot.querySelector('.card');
+    if (existing) {
+      originSlot.appendChild(existing); // la movemos al origen
     }
+    targetSlot.appendChild(draggingCard); // movemos la que arrastrábamos
+  }
 
-    function handleDragEnd() {
-      this.classList.remove("dragging");
+  // limpiar estados visuales
+  slots.forEach(s => s.classList.remove('over'));
+
+  // quitar clon y mostrar original
+  dragClone.remove();
+  dragClone = null;
+
+  draggingCard.style.visibility = 'visible';
+  draggingCard.releasePointerCapture(pointerData.id);
+  draggingCard = null;
+  originSlot = null;
+  pointerData.id = null;
+
+  // opcional: comprobar orden tras soltar
+  // checkOrder(); // si quieres validar automáticamente aquí
+}
+
+/* --- Lógica del juego (timer, check) --- */
+function startGame(){
+  placeShuffledCards();
+  // reiniciar timer y score
+  clearInterval(timer);
+  timeLeft = 60;
+  score = 0;
+  timerEl.textContent = timeLeft;
+  scoreEl.textContent = score;
+
+  timer = setInterval(()=>{
+    timeLeft--;
+    timerEl.textContent = timeLeft;
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      alert('Tiempo agotado');
     }
+  }, 1000);
+}
 
-    function handleDragOver(e) {
-      e.preventDefault();
-      this.classList.add("over");
-      e.dataTransfer.dropEffect = "move";
-    }
+function checkOrder(){
+  const current = slots.map(s => {
+    const c = s.querySelector('.card');
+    return c ? c.dataset.image : null;
+  });
+  if (JSON.stringify(current) === JSON.stringify(correctOrder)) {
+    // recompensa en puntos según tiempo restante
+    const bonus = timeLeft * 10;
+    score = 1000 + bonus;
+    scoreEl.textContent = score;
+    clearInterval(timer);
+    alert('¡Correcto! 🎉 Puntos: ' + score);
+  } else {
+    alert('El orden no es correcto, sigue intentando.');
+  }
+}
 
-    function handleDragLeave() {
-      this.classList.remove("over");
-    }
+/* Botones */
+startBtn.addEventListener('click', startGame);
+checkBtn.addEventListener('click', checkOrder);
+restartBtn.addEventListener('click', ()=> {
+  clearInterval(timer);
+  placeShuffledCards();
+  timeLeft = 60;
+  timerEl.textContent = timeLeft;
+  score = 0;
+  scoreEl.textContent = score;
+});
 
-    function handleDrop(e) {
-      e.stopPropagation();
-      if (dragSrcEl !== this) {
-        dragSrcEl.parentNode.innerHTML = this.outerHTML;
-        this.outerHTML = e.dataTransfer.getData("text/html");
-
-        addDnDHandlers(dragSrcEl.parentNode.querySelector(".card"));
-        addDnDHandlers(this.querySelector(".card"));
-
-        checkOrder();
-      }
-      this.classList.remove("over");
-      return false;
-    }
-
-    function addDnDHandlers(card) {
-      card.addEventListener("dragstart", handleDragStart);
-      card.addEventListener("dragend", handleDragEnd);
-      card.parentNode.addEventListener("dragover", handleDragOver);
-      card.parentNode.addEventListener("dragleave", handleDragLeave);
-      card.parentNode.addEventListener("drop", handleDrop);
-    }
-
-    document.querySelectorAll(".card").forEach(addDnDHandlers);
-
-    function checkOrder() {
-      const currentOrder = Array.from(document.querySelectorAll(".card"))
-        .map(c => c.dataset.number);
-
-      if (JSON.stringify(currentOrder) === JSON.stringify(cards)) {
-        score += 10;
-        scoreDisplay.textContent = "Puntuación: " + score;
-        alert("¡Correcto! 🎉");
-      }
-    }
-
-    function startTimer() {
-      let timer = setInterval(() => {
-        timeLeft--;
-        timerDisplay.textContent = "Tiempo: " + timeLeft;
-        if (timeLeft <= 0) {
-          clearInterval(timer);
-          alert("¡Se acabó el tiempo!");
-        }
-      }, 1000);
-    }
-
-    startTimer();
-  </script>
+/* Inicial */
+placeShuffledCards();
+</script>
 </body>
 </html>
+
