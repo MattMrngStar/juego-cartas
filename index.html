@@ -7,18 +7,22 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- AUDIO -->
   <audio id="bg-music" src="audio/musica.mp3" loop></audio>
+
   <!-- PANTALLA DE INICIO -->
   <div id="start-screen" class="overlay">
     <div class="start-inner">
       <h1>Ordena las Cartas</h1>
-      <p>Arrastra las cartas y colócalas en el orden correcto: <strong>¿Cúal es el orden de los pasos para armar un Plan Familiar de Emergencia?</strong>.  
-         Hazlo antes de que se acabe el tiempo. ¡Buena suerte!</p>
+      <p>Arrastra las cartas y colócalas en el orden correcto: 
+        <strong>¿Cuál es el orden de los pasos para armar un Plan Familiar de Emergencia?</strong>.  
+        Hazlo antes de que se acabe el tiempo. ¡Buena suerte!
+      </p>
       <div id="demo-cards" aria-hidden="true">
         <!-- 3 cartas de demostración (reverso) -->
-        <img class="demo-card" src="Cartas/CartasPFE-08.png" style="--delay:0s" alt="reverso">
-        <img class="demo-card" src="Cartas/CartasPFE-08.png" style="--delay:0.45s" alt="reverso">
-        <img class="demo-card" src="Cartas/CartasPFE-08.png" style="--delay:0.9s" alt="reverso">
+        <img class="demo-card" src="Cartas/CartasPFE-08.png" alt="reverso">
+        <img class="demo-card" src="Cartas/CartasPFE-08.png" alt="reverso">
+        <img class="demo-card" src="Cartas/CartasPFE-08.png" alt="reverso">
       </div>
 
       <div class="start-actions">
@@ -35,37 +39,16 @@
       <div>Puntos: <span id="score">0</span></div>
     </header>
 
-    <!-- TABLERO: slots fijos -->
+    <!-- TABLERO -->
     <section id="board" aria-label="Tablero de 7 slots">
-  <div class="slot-container">
-    <span class="slot-number">1</span>
-    <div class="slot" data-slot="0" aria-label="Slot 1"></div>
-  </div>
-  <div class="slot-container">
-    <span class="slot-number">2</span>
-    <div class="slot" data-slot="1" aria-label="Slot 2"></div>
-  </div>
-  <div class="slot-container">
-    <span class="slot-number">3</span>
-    <div class="slot" data-slot="2" aria-label="Slot 3"></div>
-  </div>
-  <div class="slot-container">
-    <span class="slot-number">4</span>
-    <div class="slot" data-slot="3" aria-label="Slot 4"></div>
-  </div>
-  <div class="slot-container">
-    <span class="slot-number">5</span>
-    <div class="slot" data-slot="4" aria-label="Slot 5"></div>
-  </div>
-  <div class="slot-container">
-    <span class="slot-number">6</span>
-    <div class="slot" data-slot="5" aria-label="Slot 6"></div>
-  </div>
-  <div class="slot-container">
-    <span class="slot-number">7</span>
-    <div class="slot" data-slot="6" aria-label="Slot 7"></div>
-  </div>
-</section>
+      <div class="slot-container"><span class="slot-number">1</span><div class="slot" data-slot="0"></div></div>
+      <div class="slot-container"><span class="slot-number">2</span><div class="slot" data-slot="1"></div></div>
+      <div class="slot-container"><span class="slot-number">3</span><div class="slot" data-slot="2"></div></div>
+      <div class="slot-container"><span class="slot-number">4</span><div class="slot" data-slot="3"></div></div>
+      <div class="slot-container"><span class="slot-number">5</span><div class="slot" data-slot="4"></div></div>
+      <div class="slot-container"><span class="slot-number">6</span><div class="slot" data-slot="5"></div></div>
+      <div class="slot-container"><span class="slot-number">7</span><div class="slot" data-slot="6"></div></div>
+    </section>
 
     <footer class="controls">
       <button id="btn-check" class="secondary">Validar Orden</button>
