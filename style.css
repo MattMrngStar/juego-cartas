@@ -107,8 +107,8 @@ body{
 
 /* carta (img) dentro del slot */
 .card{
-  width:92%;
-  height:92%;
+  width:98%;
+  height:98%;
   object-fit:cover;
   border-radius:8px;
   user-select:none;
