@@ -1,136 +1,38 @@
-const startBtn = document.getElementById("start-btn");
-const restartBtn = document.getElementById("restart-btn");
-const checkBtn = document.getElementById("check-btn");
+// Pantalla de inicio
+document.getElementById("start-btn").addEventListener("click", () => {
+  document.getElementById("start-screen").style.display = "none";
+  document.getElementById("game-board").style.display = "block";
+});
 
-const startScreen = document.getElementById("start-screen");
-const gameScreen = document.getElementById("game-screen");
-const endScreen = document.getElementById("end-screen");
+// Arrastrar y soltar
+const cards = document.querySelectorAll(".card");
+const dropZones = document.querySelectorAll(".drop-zone");
 
-const gameBoard = document.getElementById("game-board");
-const timerEl = document.getElementById("timer");
-const scoreEl = document.getElementById("score");
-const finalScoreEl = document.getElementById("final-score");
-const resultMsg = document.getElementById("result-msg");
-
-let timeLeft = 60;
-let score = 0;
-let timer;
-let dragged;
-
-const correctOrder = [
-  "CartasPFE-01.png",
-  "CartasPFE-02.png",
-  "CartasPFE-03.png",
-  "CartasPFE-04.png",
-  "CartasPFE-05.png",
-  "CartasPFE-06.png",
-  "CartasPFE-07.png"
-];
-
-function startGame() {
-  startScreen.classList.add("hidden");
-  endScreen.classList.add("hidden");
-  gameScreen.classList.remove("hidden");
-
-  timeLeft = 60;
-  score = 0;
-  timerEl.textContent = timeLeft;
-  scoreEl.textContent = score;
-
-  // Mezclar cartas
-  let shuffled = [...correctOrder].sort(() => Math.random() - 0.5);
-
-  gameBoard.innerHTML = "";
-  shuffled.forEach(imgName => {
-    let card = document.createElement("div");
-    card.classList.add("card");
-    card.setAttribute("draggable", "true");
-    card.dataset.image = imgName;
-
-    let img = document.createElement("img");
-    img.src = "Cartas/" + imgName;
-
-    card.appendChild(img);
-    gameBoard.appendChild(card);
+cards.forEach(card => {
+  card.addEventListener("dragstart", e => {
+    e.dataTransfer.setData("text/plain", e.target.src);
+    setTimeout(() => card.classList.add("dragging"), 0);
   });
 
-  enableDragDrop();
-  startTimer();
-}
-
-function enableDragDrop() {
-  const cards = document.querySelectorAll("#game-board .card");
-
-  cards.forEach(card => {
-    card.addEventListener("dragstart", e => {
-      dragged = card;
-      card.classList.add("dragging");
-    });
-
-    card.addEventListener("dragend", e => {
-      card.classList.remove("dragging");
-    });
-
-    card.addEventListener("dragover", e => {
-      e.preventDefault();
-    });
-
-    card.addEventListener("drop", e => {
-      e.preventDefault();
-      if (dragged !== card) {
-        let temp = dragged.innerHTML;
-        let tempData = dragged.dataset.image;
-
-        dragged.innerHTML = card.innerHTML;
-        dragged.dataset.image = card.dataset.image;
-
-        card.innerHTML = temp;
-        card.dataset.image = tempData;
-      }
-    });
+  card.addEventListener("dragend", () => {
+    card.classList.remove("dragging");
   });
-}
+});
 
-function startTimer() {
-  clearInterval(timer);
-  timer = setInterval(() => {
-    timeLeft--;
-    timerEl.textContent = timeLeft;
-    if (timeLeft <= 0) {
-      clearInterval(timer);
-      endGame(false);
-    }
-  }, 1000);
-}
+dropZones.forEach(zone => {
+  zone.addEventListener("dragover", e => {
+    e.preventDefault();
+    zone.style.background = "#d3ffd3"; // marca verde clara al pasar
+  });
 
-function checkOrder() {
-  const currentOrder = Array.from(document.querySelectorAll("#game-board .card"))
-    .map(c => c.dataset.image);
+  zone.addEventListener("dragleave", () => {
+    zone.style.background = "transparent";
+  });
 
-  if (JSON.stringify(currentOrder) === JSON.stringify(correctOrder)) {
-    let bonus = timeLeft * 10;
-    score = 1000 + bonus;
-    scoreEl.textContent = score;
-    endGame(true);
-  } else {
-    alert("El orden no es correcto, sigue intentando.");
-  }
-}
-
-function endGame(success) {
-  clearInterval(timer);
-  gameScreen.classList.add("hidden");
-  endScreen.classList.remove("hidden");
-
-  if (success) {
-    resultMsg.textContent = "¡Correcto! 🎉";
-  } else {
-    resultMsg.textContent = "Se acabó el tiempo ⏳";
-  }
-
-  finalScoreEl.textContent = score;
-}
-
-startBtn.addEventListener("click", startGame);
-restartBtn.addEventListener("click", startGame);
-checkBtn.addEventListener("click", checkOrder);
+  zone.addEventListener("drop", e => {
+    e.preventDefault();
+    const cardSrc = e.dataTransfer.getData("text/plain");
+    zone.innerHTML = `<img src="${cardSrc}" class="card" draggable="false" />`;
+    zone.style.background = "transparent";
+  });
+});
