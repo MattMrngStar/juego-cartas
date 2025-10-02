@@ -8,35 +8,30 @@
 <body>
   <!-- Pantalla de inicio -->
   <div id="start-screen">
-    <h1>Ordena las Cartas 🃏</h1>
-    <p>Arrastra las cartas y ordénalas del 01 al 07 en el menor tiempo posible.</p>
+    <h1>Juego de Cartas</h1>
+    <p>Arrastra las cartas a las posiciones correctas.</p>
     <button id="start-btn">Comenzar</button>
-
-    <!-- Cartas decorativas -->
-    <div id="demo-cards">
-      <div class="card-demo"><img src="Cartas/CartasPFE-08.png"></div>
-      <div class="card-demo"><img src="Cartas/CartasPFE-08.png"></div>
-      <div class="card-demo"><img src="Cartas/CartasPFE-08.png"></div>
+    <div class="card-animation">
+      <img src="images/back-08.png" class="animated-card" />
+      <img src="images/back-08.png" class="animated-card" />
+      <img src="images/back-08.png" class="animated-card" />
     </div>
   </div>
 
-  <!-- Pantalla de juego -->
-  <div id="game-screen" class="hidden">
-    <div id="hud">
-      <span>Tiempo: <span id="timer">60</span></span>
-      <span>Puntuación: <span id="score">0</span></span>
-    </div>
-    <div id="game-board"></div>
-    <button id="check-btn">Verificar</button>
-  </div>
+  <!-- Tablero de juego (oculto al inicio) -->
+  <div id="game-board" style="display:none;">
+    <div class="drop-zone" id="slot1"></div>
+    <div class="drop-zone" id="slot2"></div>
+    <div class="drop-zone" id="slot3"></div>
 
-  <!-- Pantalla final -->
-  <div id="end-screen" class="hidden">
-    <h2 id="result-msg"></h2>
-    <p>Puntuación final: <span id="final-score">0</span></p>
-    <button id="restart-btn">Jugar de nuevo</button>
+    <div class="cards">
+      <img src="images/card1.png" class="card" draggable="true" />
+      <img src="images/card2.png" class="card" draggable="true" />
+      <img src="images/card3.png" class="card" draggable="true" />
+    </div>
   </div>
 
   <script src="script.js"></script>
 </body>
+
 </html>
