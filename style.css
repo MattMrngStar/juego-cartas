@@ -1,7 +1,7 @@
 :root{
-  --slot-w: 120px;
-  --slot-h: 160px;
-  --gap: 12px;
+  --slot-w: 190px;
+  --slot-h: 270px;
+  --gap: 16px;
   --accent: #2f80ed;
   --ok: #31b26a;
 }
@@ -62,7 +62,7 @@ body{
 #board{
   width:100%;
   display:grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap:var(--gap);
   padding:12px;
   background:linear-gradient(180deg,#fff,#f7fbff);
