@@ -127,9 +127,9 @@ button.secondary{ background:#6b7280 }
 }
 
 .guide-content img{
-  width:100%;
-  max-height: 85vh; /* Aumenta el tamaño visible de la imagen */
-  object-fit: contain; 
+ width:100%;
+  max-height: 95vh;
+  object-fit: contain;
   border-radius:10px;
 }
 
