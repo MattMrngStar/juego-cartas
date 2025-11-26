@@ -48,11 +48,10 @@ body{
 /* Demo cards en inicio */
 #demo-cards{display:flex; gap:14px; justify-content:center; margin:12px 0}
 .demo-card{ width:82px; height:120px; object-fit:cover; border-radius:8px;
-  animation: float 4s ease-in-out infinite, flip 3s linear infinite;
+  animation: float 4s ease-in-out infinite;
 }
 .demo-card[style]{ /* acepta --delay en inline style */ }
 @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-14px)}100%{transform:translateY(0)}}
-@keyframes flip{0%{transform:rotateY(0)}50%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
 
 /* HUD */
 #game-area{ width:min(980px,98%); display:flex; flex-direction:column; align-items:center }
