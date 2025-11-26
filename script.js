@@ -1,3 +1,7 @@
+/* ---------------------------
+   script.js - drag optimizado y robusto con lógica de ayuda
+   --------------------------- */
+
 document.addEventListener('DOMContentLoaded', () => {
 
   const correctOrder = [
@@ -22,25 +26,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultTitle = document.getElementById('result-title');
   const finalScoreEl = document.getElementById('final-score');
   const btnPlayAgain = document.getElementById('btn-play-again');
-
-  /* Guía DOM */
-  const solutionOverlay = document.getElementById("solution-overlay");
-  const btnOpenSolution = document.getElementById("btn-open-solution");
-  const btnCloseSolution = document.getElementById("btn-close-solution");
-  const btnEndGuide = document.getElementById("btn-end-guide");
-  const solutionImage = document.getElementById("solution-image");
+  
+  // NUEVOS ELEMENTOS DOM
+  const btnHelp = document.getElementById('btn-help');
+  const solutionGuide = document.getElementById('solution-guide');
+  const btnCloseGuide = document.getElementById('btn-close-guide');
 
   /* estado global */
   let slots = [];               // se llenará dinámicamente
   let timer = null;
   let timeLeft = 300;
   let score = 0;
+  // NUEVOS ESTADOS
+  let attempts = 0;             // Contador de intentos de validación
+  let helpButtonEnabled = false; // Estado del botón de ayuda
 
-  /* variables guía/ayuda */
-  let failedAttempts = 0;
-  let hasPlayedOneMinute = false;
-
-  /* drag state (pointer-based, original) */
+  /* drag state */
   let draggingCard = null;
   let dragClone = null;
   let originSlot = null;
@@ -60,14 +61,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function createCardElement(imgName){
     const img = document.createElement('img');
     img.className = 'card';
-    // crucial: evitar drag nativo (previene el ghost icon)
     img.draggable = false;
     img.src = `Cartas/${imgName}`;
     img.alt = imgName;
     img.dataset.image = imgName;
     img.style.willChange = 'transform';
-    // pointer events (un solo handler para mouse/touch/stylus)
-    img.addEventListener('pointerdown', onPointerDown, {passive:false});
+    img.addEventListener('pointerdown', onPointerDown);
     return img;
   }
 
@@ -81,18 +80,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* --- drag handlers (pointer clone technique) --- */
+  /* --- drag handlers --- */
   function onPointerDown(e){
-    // solo botón principal o touch (si tiene button y no 0, ignore)
+    // solo boton principal (mouse) o touch
     if (e.button && e.button !== 0) return;
-
-    // prevenir comportamiento nativo (especialmente en móviles)
-    e.preventDefault();
 
     draggingCard = e.currentTarget;
     originSlot = draggingCard.parentElement;
 
-    // coordenadas iniciales
+    // coordenadas iniciales del puntero
     currentX = e.clientX;
     currentY = e.clientY;
     prevX = currentX;
@@ -104,25 +100,21 @@ document.addEventListener('DOMContentLoaded', () => {
     dragClone.className = 'dragging-clone';
     dragClone.style.width = rect.width + 'px';
     dragClone.style.height = rect.height + 'px';
-    // asegurar que no capture eventos
-    dragClone.style.pointerEvents = 'none';
+    // append antes para que exista en DOM
     document.body.appendChild(dragClone);
 
-    // ocultar original mediante visibility (no display), así conserva flujo y evita "saltos"
+    // ocultar original
     draggingCard.style.visibility = 'hidden';
 
     dragging = true;
-    // escuchar movimiento y soltar
-    document.addEventListener('pointermove', onPointerMove, {passive:false});
-    document.addEventListener('pointerup', onPointerUp, {once:true});
+    document.addEventListener('pointermove', onPointerMove, {passive: false});
+    document.addEventListener('pointerup', onPointerUp, {once: true});
 
-    // arrancar loop visual
     rafId = requestAnimationFrame(updateDragClone);
   }
 
   function onPointerMove(e){
     if(!dragging) return;
-    // prevenir scroll/gestos
     e.preventDefault();
     currentX = e.clientX;
     currentY = e.clientY;
@@ -134,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dx = currentX - prevX;
     const rot = Math.max(-14, Math.min(14, dx * 0.6));
 
-    // colocamos la copia centrada en el puntero con translate(-50%,-50%)
+    // movemos la copia con translate3d y la centramos con translate(-50%,-50%)
     dragClone.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%,-50%) scale(1.06) rotate(${rot}deg)`;
 
     // resaltar slot bajo el puntero
@@ -162,7 +154,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function onPointerUp(e){
-    // detener loop y listeners
     dragging = false;
     cancelAnimationFrame(rafId);
     document.removeEventListener('pointermove', onPointerMove);
@@ -173,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(!targetSlot) targetSlot = nearestSlotToPoint(currentX, currentY);
     if(!targetSlot) targetSlot = originSlot;
 
-    // swap / mover: si hay carta en target, intercambiamos; si no, movemos
+    // swap / mover
     if(targetSlot === originSlot){
       originSlot.appendChild(draggingCard);
     } else {
@@ -194,40 +185,57 @@ document.addEventListener('DOMContentLoaded', () => {
     originSlot = null;
   }
 
+  /* --- helper para el tiempo / ayuda --- */
+  function updateTimerDisplay(){
+    // Actualiza el tiempo y chequea la condición de 1 minuto
+    timeLeft--;
+    if (timerEl) timerEl.textContent = timeLeft;
+
+    if(timeLeft <= 0){
+      clearInterval(timer);
+      showEnd(false);
+    } 
+    
+    // Si han pasado 60 segundos (el contador bajó de 300 a 240) Y no se ha activado antes
+    if(timeLeft <= 240 && !helpButtonEnabled){
+        enableHelpButton();
+    }
+  }
+
+  function enableHelpButton(){
+      helpButtonEnabled = true;
+      if(btnHelp) btnHelp.classList.remove('hidden');
+  }
+  
+  // FUNCIONES GUÍA DE SOLUCIÓN
+  function showGuide(){
+      if(solutionGuide) solutionGuide.classList.remove('hidden');
+  }
+
+  function hideGuide(){
+      if(solutionGuide) solutionGuide.classList.add('hidden');
+  }
+
   /* --- game logic --- */
   function startTimer(){
     clearInterval(timer);
     timeLeft = 300;
+    helpButtonEnabled = false; // Reinicia el estado del botón
+    if(btnHelp) btnHelp.classList.add('hidden'); // Oculta el botón al iniciar
+
     if (timerEl) timerEl.textContent = timeLeft;
-    timer = setInterval(()=>{
-      timeLeft--;
-      if (timerEl) timerEl.textContent = timeLeft;
-
-      // comprobación para mostrar guía al superar 1 minuto jugado
-      if (!hasPlayedOneMinute && (300 - timeLeft) >= 60) {
-        hasPlayedOneMinute = true;
-        showSolutionButtonIfNeeded();
-      }
-
-      if(timeLeft <= 0){
-        clearInterval(timer);
-        showEnd(false);
-      }
-    },1000);
+    timer = setInterval(updateTimerDisplay, 1000);
   }
 
   function startGame(){
     placeShuffledCards();
     score = 0; if(scoreEl) scoreEl.textContent = score;
+    attempts = 0; // Reinicia intentos
+    
     if(startScreen) startScreen.classList.add('hidden');
     if(gameArea) gameArea.classList.remove('hidden');
     if(endScreen) endScreen.classList.add('hidden');
     startTimer();
-
-    failedAttempts = 0;
-    hasPlayedOneMinute = false;
-    // ocultar boton guía en inicio
-    if(btnOpenSolution) btnOpenSolution.classList.add('hidden');
 
     const music = document.getElementById('bg-music');
     if(music){
@@ -240,70 +248,50 @@ document.addEventListener('DOMContentLoaded', () => {
     getSlots();
     const current = slots.map(s => s.querySelector('.card')?.dataset.image || null);
     if(current.includes(null)){ alert('Faltan cartas en algunos slots.'); return; }
+    
+    attempts++; // Incrementa el contador de intentos
+    
+    // Si tiene más de 2 intentos fallidos, activa el botón de ayuda
+    if(attempts > 2 && !helpButtonEnabled){
+        enableHelpButton();
+    }
+    
     if(JSON.stringify(current) === JSON.stringify(correctOrder)){
       const bonus = Math.max(0, timeLeft) * 10;
       score = 1000 + bonus;
       if(scoreEl) scoreEl.textContent = score;
       clearInterval(timer);
+      
+      // Muestra la guía al resolver correctamente (para ampliar la información)
+      showGuide();
+      
       showEnd(true, score);
-      // mostrar guía al resolver
-      showSolutionButton();
     } else {
-      failedAttempts++;
-      showSolutionButtonIfNeeded();
-      alert('El orden no es correcto, sigue intentando.');
+      alert(`El orden no es correcto, llevas ${attempts} intentos. Sigue intentando.`);
     }
   }
 
   function restartGame(){
     placeShuffledCards();
     score = 0; if(scoreEl) scoreEl.textContent = score;
+    attempts = 0; // Reinicia intentos
     clearInterval(timer);
     timeLeft = 300; if(timerEl) timerEl.textContent = timeLeft;
     startTimer();
     if(endScreen) endScreen.classList.add('hidden');
     if(gameArea) gameArea.classList.remove('hidden');
-
-    // reset guía
-    failedAttempts = 0;
-    hasPlayedOneMinute = false;
-    if(btnOpenSolution) btnOpenSolution.classList.add('hidden');
-    if(btnEndGuide) btnEndGuide.classList.add('hidden');
   }
 
   function showEnd(success, points=0){
     if(resultTitle) resultTitle.textContent = success ? '¡Correcto! 🎉' : 'Tiempo agotado ⏳';
     if(finalScoreEl) finalScoreEl.textContent = points;
+    
     if(endScreen) endScreen.classList.remove('hidden');
     if(gameArea) gameArea.classList.add('hidden');
 
     const music = document.getElementById('bg-music');
     if(music){ music.pause(); music.currentTime = 0; }
-
-    // Mostrar botón de guía en pantalla final
-    if(btnEndGuide) btnEndGuide.classList.remove('hidden');
   }
-
-  /* --- GUIA handlers --- */
-  function showSolutionOverlay(){
-    if(solutionOverlay) solutionOverlay.classList.remove('hidden');
-    if(btnOpenSolution) btnOpenSolution.setAttribute('aria-hidden','false');
-  }
-  function hideSolutionOverlay(){
-    if(solutionOverlay) solutionOverlay.classList.add('hidden');
-    if(btnOpenSolution) btnOpenSolution.setAttribute('aria-hidden','true');
-  }
-  function showSolutionButton(){
-    if(btnOpenSolution) btnOpenSolution.classList.remove('hidden');
-    if(btnOpenSolution) btnOpenSolution.setAttribute('aria-hidden','false');
-  }
-  function showSolutionButtonIfNeeded(){
-    if(failedAttempts >= 2 || hasPlayedOneMinute) showSolutionButton();
-  }
-
-  if(btnOpenSolution) btnOpenSolution.addEventListener('click', showSolutionOverlay);
-  if(btnCloseSolution) btnCloseSolution.addEventListener('click', hideSolutionOverlay);
-  if(btnEndGuide) btnEndGuide.addEventListener('click', showSolutionOverlay);
 
   /* listeners botones */
   if(btnStart) btnStart.addEventListener('click', startGame);
@@ -313,6 +301,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if(startScreen) startScreen.classList.remove('hidden');
     if(endScreen) endScreen.classList.add('hidden');
   });
+  
+  // LISTENERS DEL BOTÓN DE AYUDA Y CERRAR
+  if(btnHelp) btnHelp.addEventListener('click', showGuide);
+  if(btnCloseGuide) btnCloseGuide.addEventListener('click', hideGuide);
+
 
   /* inicial */
   placeShuffledCards();
@@ -320,4 +313,3 @@ document.addEventListener('DOMContentLoaded', () => {
   if(timerEl) timerEl.textContent = timeLeft;
 
 }); // DOMContentLoaded
-
