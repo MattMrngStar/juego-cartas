@@ -1,118 +1,124 @@
-// ===========
-// Elementos
-// ===========
-const startOverlay = document.getElementById("start-overlay");
-const startBtn = document.getElementById("start-btn");
-const gameArea = document.getElementById("game-area");
+// ====================
+//       VARIABLES
+// ====================
 const board = document.getElementById("board");
-const triesTxt = document.getElementById("tries");
-const checkBtn = document.getElementById("check-btn");
-const resetBtn = document.getElementById("reset-btn");
-
-// Guía
-const guideOverlay = document.getElementById("guide-overlay");
-const openGuide = document.getElementById("open-guide");
-const closeGuide = document.getElementById("close-guide");
-
-// ===========
-// Configuración
-// ===========
-const correctOrder = ["1", "2", "3"];
+const triesSpan = document.getElementById("tries");
 let tries = 0;
 
-// ===========
-// Iniciar juego
-// ===========
-startBtn.addEventListener("click", () => {
-  startOverlay.classList.add("hidden");
-  gameArea.classList.remove("hidden");
-  loadCards();
-});
+const correctOrder = [1,2,3,4,5,6,7,8];
 
-// ===========
-// Cargar cartas
-// ===========
-function loadCards() {
+let draggedCard = null;
+
+// ====================
+//   CREAR TABLERO
+// ====================
+function createBoard(){
   board.innerHTML = "";
+  const numbers = [...correctOrder];
 
-  correctOrder.forEach((num, index) => {
+  numbers.sort(() => Math.random() - 0.5);
+
+  numbers.forEach(n => {
     const cont = document.createElement("div");
     cont.className = "slot-container";
 
     const slot = document.createElement("div");
     slot.className = "slot";
-    slot.dataset.index = index;
 
     const img = document.createElement("img");
-    img.src = `Cartas/${num}.png`;
+    img.src = `cartas/${n}.png`;   // ❤️ Tu lógica ORIGINAL
     img.className = "card";
     img.draggable = true;
-    img.dataset.value = num;
+    img.dataset.num = n;
 
+    slot.appendChild(img);
     cont.appendChild(slot);
-    cont.appendChild(img);
     board.appendChild(cont);
-
-    dragEvents(img);
   });
+
+  enableDrag();
 }
 
-// ===========
-// Arrastrar
-// ===========
-function dragEvents(card) {
+// ====================
+//       DRAG + DROP
+// ====================
+function enableDrag(){
+  const cards = document.querySelectorAll(".card");
+  const slots = document.querySelectorAll(".slot");
 
-  card.addEventListener("dragstart", () => {
-    setTimeout(() => card.classList.add("hidden"), 0);
-  });
+  cards.forEach(card=>{
+    card.addEventListener("dragstart", e=>{
+      draggedCard = e.target;
+      setTimeout(()=> card.style.opacity="0.2", 0);
+    });
 
-  card.addEventListener("dragend", () => {
-    card.classList.remove("hidden");
-  });
+    card.addEventListener("touchstart", e=>{
+      draggedCard = e.target;
+    });
 
-  document.querySelectorAll(".slot").forEach(slot => {
-    slot.addEventListener("dragover", e => e.preventDefault());
-
-    slot.addEventListener("drop", () => {
-      slot.innerHTML = "";
-      slot.appendChild(card);
+    card.addEventListener("dragend", e=>{
+      card.style.opacity="1";
     });
   });
 
+  slots.forEach(slot=>{
+    slot.addEventListener("dragover", e=> e.preventDefault());
+
+    slot.addEventListener("drop", e=>{
+      if(draggedCard){
+        if(slot.children.length > 0){
+          const temp = slot.children[0];
+          const origin = draggedCard.parentElement;
+          slot.appendChild(draggedCard);
+          origin.appendChild(temp);
+        } else {
+          slot.appendChild(draggedCard);
+        }
+      }
+    });
+  });
 }
 
-// ===========
-// Comprobar
-// ===========
-checkBtn.addEventListener("click", () => {
+// ====================
+//       VERIFICAR
+// ====================
+document.getElementById("check-btn").onclick = ()=>{
   tries++;
-  triesTxt.textContent = tries;
+  triesSpan.textContent = tries;
 
-  const placed = [...document.querySelectorAll(".slot")].map(slot => {
-    const c = slot.querySelector("img");
-    return c ? c.dataset.value : null;
-  });
+  const placed = [...document.querySelectorAll(".slot img")].map(x=>+x.dataset.num);
 
-  if (JSON.stringify(placed) === JSON.stringify(correctOrder)) {
-    alert("¡Correcto!");
+  if(JSON.stringify(placed) === JSON.stringify(correctOrder)){
+    alert("¡Correcto! 🎉");
   } else {
-    alert("Aún no es correcto. Revisa el orden.");
+    alert("Aún no es la solución.");
   }
-});
+};
 
-// ===========
-// Reiniciar
-// ===========
-resetBtn.addEventListener("click", loadCards);
+// ====================
+//      REINICIAR
+// ====================
+document.getElementById("reset-btn").onclick = ()=>{
+  tries = 0;
+  triesSpan.textContent = 0;
+  createBoard();
+};
 
-// ===========
-// GUÍA
-// ===========
-openGuide.addEventListener("click", () => {
-  guideOverlay.classList.remove("hidden");
-});
+// ====================
+//      GUIA
+// ====================
+const guideBtn = document.getElementById("open-guide");
+const guideOverlay = document.getElementById("guide-overlay");
+const closeGuide = document.getElementById("close-guide");
 
-closeGuide.addEventListener("click", () => {
-  guideOverlay.classList.add("hidden");
-});
+guideBtn.onclick = ()=> guideOverlay.classList.remove("hidden");
+closeGuide.onclick = ()=> guideOverlay.classList.add("hidden");
 
+// ====================
+//      INICIO
+// ====================
+document.getElementById("start-btn").onclick = ()=>{
+  document.getElementById("start-overlay").classList.add("hidden");
+  guideBtn.classList.remove("hidden");
+  createBoard();
+};
