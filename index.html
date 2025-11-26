@@ -1,51 +1,86 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ordena el Plan Familiar</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ordena las Cartas</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Música (dentro del body) -->
+  <audio id="bg-music" src="audio/musica.mp3" loop></audio>
 
-<!-- Overlay de inicio -->
-<div id="start-overlay" class="overlay">
-  <div class="start-inner">
-    <h2>Ordena los pasos del Plan Familiar de Emergencias</h2>
-    <div id="demo-cards">
-      <img class="demo-card" src="cartas/1.png" />
-      <img class="demo-card" src="cartas/2.png" />
-      <img class="demo-card" src="cartas/3.png" />
+  <!-- PANTALLA DE INICIO (visible al cargar) -->
+  <div id="start-screen" class="overlay">
+    <div class="start-inner">
+      <h1>Ordena las Cartas</h1>
+      <p>
+        Arrastra las cartas y colócalas en el orden correcto: 
+        <strong>¿Cuál es el orden de los pasos para armar un Plan Familiar de Gestión del Riesgo?</strong>
+      </p>
+
+      <div id="demo-cards" aria-hidden="true">
+        <img class="demo-card" src="Cartas/CartasPFE-08.png" alt="reverso">
+        <img class="demo-card" src="Cartas/CartasPFE-08.png" alt="reverso">
+        <img class="demo-card" src="Cartas/CartasPFE-08.png" alt="reverso">
+      </div>
+
+      <div class="start-actions">
+        <button id="btn-start">Iniciar Juego</button>
+      </div>
+      <small class="hint">Protegemos vidas</small>
     </div>
-    <button id="start-btn">¡Jugar!</button>
-  </div>
-</div>
-
-<!-- BOTÓN GUÍA -->
-<button class="guide-button hidden" id="open-guide">Guía</button>
-
-<!-- OVERLAY GUÍA -->
-<div id="guide-overlay" class="hidden">
-  <div class="guide-content">
-    <button class="close-btn" id="close-guide">X</button>
-    <h2>Guía de solución</h2>
-    <img src="guia.png" alt="Guía de solución">
-  </div>
-</div>
-
-<div id="game-area">
-  <div class="hud">
-    <span>Intentos: <span id="tries">0</span></span>
   </div>
 
-  <div id="board"></div>
+  <!-- ÁREA DE JUEGO (oculta al inicio) -->
+  <main id="game-area" class="hidden" role="main" aria-label="Juego de ordenar cartas">
+    <header class="hud">
+      <div>Tiempo: <span id="timer">300</span>s</div>
+      <div>Puntos: <span id="score">0</span></div>
+    </header>
 
-  <div class="controls">
-    <button id="check-btn">Verificar</button>
-    <button id="reset-btn" class="secondary">Reiniciar</button>
+    <section id="board" aria-label="Tablero de 7 slots">
+      <div class="slot-container"><span class="slot-number">1</span><div class="slot" data-slot="0"></div></div>
+      <div class="slot-container"><span class="slot-number">2</span><div class="slot" data-slot="1"></div></div>
+      <div class="slot-container"><span class="slot-number">3</span><div class="slot" data-slot="2"></div></div>
+      <div class="slot-container"><span class="slot-number">4</span><div class="slot" data-slot="3"></div></div>
+      <div class="slot-container"><span class="slot-number">5</span><div class="slot" data-slot="4"></div></div>
+      <div class="slot-container"><span class="slot-number">6</span><div class="slot" data-slot="5"></div></div>
+      <div class="slot-container"><span class="slot-number">7</span><div class="slot" data-slot="6"></div></div>
+    </section>
+
+    <footer class="controls">
+      <button id="btn-check" class="secondary">Validar Orden</button>
+      <button id="btn-restart" class="secondary">Reiniciar</button>
+    </footer>
+  </main>
+
+  <!-- PANTALLA FINAL (oculta al inicio) -->
+  <div id="end-screen" class="overlay hidden">
+    <div class="start-inner">
+      <h2 id="result-title">Resultado</h2>
+      <p>Puntuación: <strong id="final-score">0</strong></p>
+      <div class="start-actions">
+        <button id="btn-play-again">Jugar de nuevo</button>
+      </div>
+      <button id="btn-end-guide" class="guide-button hidden">Ver Guía</button>
+    </div>
   </div>
-</div>
 
-<script src="script.js"></script>
+  <!-- GUIA DE SOLUCIÓN (oculta por defecto con .hidden) -->
+  <div id="solution-overlay" class="overlay hidden" aria-hidden="true">
+    <div class="solution-inner">
+      <button id="btn-close-solution" class="close-btn" aria-label="Cerrar guía">✖</button>
+      <h2>Guía de Solución</h2>
+      <!-- Por defecto en la carpeta Cartas; si la guardas en otra ruta, cambia aquí -->
+      <img id="solution-image" src="Cartas/guia-solucion.png" alt="Guía de solución">
+      <p class="solution-text">Explicación paso a paso del orden correcto.</p>
+    </div>
+  </div>
+
+  <!-- Botón flotante que aparece según condiciones -->
+  <button id="btn-open-solution" class="solution-button hidden" aria-hidden="true">Ver guía</button>
+
+  <script src="script.js"></script>
 </body>
 </html>
