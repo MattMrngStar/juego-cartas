@@ -207,4 +207,15 @@ button.secondary{ background:#6b7280 }
   padding:6px 10px;
   cursor:pointer;
   font-weight:bold;
+
+  .card{
+  touch-action: none; /* evita gestos/zoom que interrumpen el pointer drag */
+  -webkit-user-drag: none; /* evitar ghost images en navegadores webkit */
+}
+
+.dragging-clone{
+  z-index: 9999 !important;
+  pointer-events: none;
+}
+
 }
