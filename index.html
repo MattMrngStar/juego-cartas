@@ -7,10 +7,8 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Música (dentro del body) -->
   <audio id="bg-music" src="audio/musica.mp3" loop></audio>
 
-  <!-- PANTALLA DE INICIO (visible al cargar) -->
   <div id="start-screen" class="overlay">
     <div class="start-inner">
       <h1>Ordena las Cartas</h1>
@@ -32,11 +30,11 @@
     </div>
   </div>
 
-  <!-- ÁREA DE JUEGO (oculta al inicio) -->
   <main id="game-area" class="hidden" role="main" aria-label="Juego de ordenar cartas">
     <header class="hud">
       <div>Tiempo: <span id="timer">300</span>s</div>
       <div>Puntos: <span id="score">0</span></div>
+      <div><button id="btn-help" class="secondary hidden">Ver Guía</button></div>
     </header>
 
     <section id="board" aria-label="Tablero de 7 slots">
@@ -55,7 +53,6 @@
     </footer>
   </main>
 
-  <!-- PANTALLA FINAL (oculta al inicio) -->
   <div id="end-screen" class="overlay hidden">
     <div class="start-inner">
       <h2 id="result-title">Resultado</h2>
@@ -63,23 +60,16 @@
       <div class="start-actions">
         <button id="btn-play-again">Jugar de nuevo</button>
       </div>
-      <button id="btn-end-guide" class="guide-button hidden">Ver Guía</button>
     </div>
   </div>
-
-  <!-- GUIA DE SOLUCIÓN (oculta por defecto con .hidden) -->
-  <div id="solution-overlay" class="overlay hidden" aria-hidden="true">
-    <div class="solution-inner">
-      <button id="btn-close-solution" class="close-btn" aria-label="Cerrar guía">✖</button>
-      <h2>Guía de Solución</h2>
-      <!-- Por defecto en la carpeta Cartas; si la guardas en otra ruta, cambia aquí -->
-      <img id="solution-image" src="Cartas/guia-solucion.png" alt="Guía de solución">
-      <p class="solution-text">Explicación paso a paso del orden correcto.</p>
+  
+  <div id="solution-guide" class="overlay hidden">
+    <div class="guide-inner">
+        <h2>Guía de Solución y Explicación</h2>
+        <img src="Guia/guia-solucion.png" alt="Guía visual del orden correcto y explicación de cada carta" class="guide-image">
+        <button id="btn-close-guide">Cerrar</button>
     </div>
   </div>
-
-  <!-- Botón flotante que aparece según condiciones -->
-  <button id="btn-open-solution" class="solution-button hidden" aria-hidden="true">Ver guía</button>
 
   <script src="script.js"></script>
 </body>
