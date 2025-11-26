@@ -329,6 +329,6 @@ document.addEventListener('DOMContentLoaded', () => {
     placeShuffledCards();
     if(gameArea) gameArea.classList.add('hidden');
     // Muestra el tiempo inicial en 5:00s
-    if(timerEl) timerEl.textContent = '5:00s'; 
+    if(timerEl) timerEl.textContent = '5:00'; 
 
 }); // DOMContentLoaded
