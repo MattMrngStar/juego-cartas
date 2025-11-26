@@ -1,86 +1,65 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Ordena las Cartas</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ordena los pasos – Plan Familiar</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-  <!-- Música -->
-  <audio id="bg-music" src="audio/musica.mp3" loop></audio>
+<!-- ============= -->
+<!--   OVERLAY DE INICIO -->
+<!-- ============= -->
+<div id="start-overlay" class="overlay">
+  <div class="start-inner">
+    <h2>Ordena los pasos del Plan Familiar de Emergencias</h2>
+    <p>Arrastra y organiza correctamente las cartas en el orden correcto.</p>
 
-  <!-- ============ GUÍA DE SOLUCIÓN ============ -->
-  <div id="guide-overlay" class="hidden">
-    <div class="guide-content">
-      <button id="close-guide" class="close-btn">✖</button>
-      <h2>Guía de Solución</h2>
-      <img src="Guia/guia-solucion.png" alt="Guía de solución completa">
+    <div id="demo-cards">
+      <img src="Cartas/1.png" class="demo-card">
+      <img src="Cartas/2.png" class="demo-card">
+      <img src="Cartas/3.png" class="demo-card">
     </div>
+
+    <button id="start-btn">Iniciar</button>
+  </div>
+</div>
+
+<!-- ============= -->
+<!--   ÁREA DEL JUEGO -->
+<!-- ============= -->
+<div id="game-area" class="hidden">
+
+  <div class="hud">
+    <span><strong>Intentos:</strong> <span id="tries">0</span></span>
   </div>
 
-  <!-- Botón flotante para abrir guía -->
-  <button id="btn-open-guide" class="guide-button hidden">Ver Guía</button>
+  <div id="board"></div>
 
-
-  <!-- PANTALLA DE INICIO -->
-  <div id="start-screen" class="overlay">
-    <div class="start-inner">
-      <h1>Ordena las Cartas</h1>
-      <p>
-        Arrastra las cartas y colócalas en el orden correcto:<br>
-        <strong>¿Cuál es el orden de los pasos para armar un Plan Familiar de Gestión del Riesgo?</strong>
-      </p>
-
-      <div id="demo-cards" aria-hidden="true">
-        <img class="demo-card" src="Cartas/CartasPFE-08.png">
-        <img class="demo-card" src="Cartas/CartasPFE-08.png">
-        <img class="demo-card" src="Cartas/CartasPFE-08.png">
-      </div>
-
-      <div class="start-actions">
-        <button id="btn-start">Iniciar Juego</button>
-      </div>
-      <small class="hint">Protegemos vidas</small>
-    </div>
+  <div class="controls">
+    <button id="check-btn">Comprobar</button>
+    <button id="reset-btn" class="secondary">Reiniciar</button>
   </div>
 
-  <!-- ÁREA DE JUEGO -->
-  <main id="game-area" class="hidden">
-    <header class="hud">
-      <div>Tiempo: <span id="timer">300</span>s</div>
-      <div>Puntos: <span id="score">0</span></div>
-    </header>
+</div>
 
-    <section id="board">
-      <div class="slot-container"><span class="slot-number">1</span><div class="slot" data-slot="0"></div></div>
-      <div class="slot-container"><span class="slot-number">2</span><div class="slot" data-slot="1"></div></div>
-      <div class="slot-container"><span class="slot-number">3</span><div class="slot" data-slot="2"></div></div>
-      <div class="slot-container"><span class="slot-number">4</span><div class="slot" data-slot="3"></div></div>
-      <div class="slot-container"><span class="slot-number">5</span><div class="slot" data-slot="4"></div></div>
-      <div class="slot-container"><span class="slot-number">6</span><div class="slot" data-slot="5"></div></div>
-      <div class="slot-container"><span class="slot-number">7</span><div class="slot" data-slot="6"></div></div>
-    </section>
+<!-- ============= -->
+<!--   BOTÓN GUÍA -->
+<!-- ============= -->
+<button id="open-guide" class="guide-button">Ver Guía</button>
 
-    <footer class="controls">
-      <button id="btn-check" class="secondary">Validar Orden</button>
-      <button id="btn-restart" class="secondary">Reiniciar</button>
-    </footer>
-  </main>
-
-  <!-- PANTALLA FINAL -->
-  <div id="end-screen" class="overlay hidden">
-    <div class="start-inner">
-      <h2 id="result-title">Resultado</h2>
-      <p>Puntuación: <strong id="final-score">0</strong></p>
-      <div class="start-actions">
-        <button id="btn-play-again">Jugar de nuevo</button>
-      </div>
-      <button id="btn-end-guide" class="guide-button">Ver Guía</button>
-    </div>
+<!-- ============= -->
+<!--   OVERLAY GUÍA -->
+<!-- ============= -->
+<div id="guide-overlay" class="hidden">
+  <div class="guide-content">
+    <button id="close-guide" class="close-btn">X</button>
+    <img src="Guia/guia-solucion.png" alt="Guía de solución">
   </div>
+</div>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
