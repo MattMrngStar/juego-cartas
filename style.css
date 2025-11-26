@@ -25,7 +25,7 @@ body{
   position:fixed; inset:0;
   display:flex; align-items:center; justify-content:center;
   background: rgba(255,255,255,0.94);
-  z-index:100; /* Antes 90 */
+  z-index:90;
   padding:18px;
 }
 
@@ -39,27 +39,12 @@ body{
 }
 
 /* Demo Cards */
-#demo-cards{
-  display:flex; gap:14px;
-  justify-content:center;
-  margin:12px 0
-}
-.demo-card{
-  width:82px; height:120px;
-  border-radius:8px;
-  animation: float 2.3s ease-in-out infinite alternate;
-}
-@keyframes float{
-  from{ transform:translateY(0); }
-  to{ transform:translateY(-10px); }
-}
+#demo-cards{display:flex; gap:14px; justify-content:center; margin:12px 0}
+.demo-card{ width:82px; height:120px; border-radius:8px; }
 
 /* HUD */
-#game-area{
-  width:min(980px,98%);
-  display:flex; flex-direction:column; align-items:center
-}
-.hud{ display:flex; gap:12px; font-weight:700; margin-bottom:12px }
+#game-area{ width:min(980px,98%); display:flex; flex-direction:column; align-items:center }
+.hud{ display:flex; justify-content:center; gap:12px; font-weight:700; margin-bottom:12px }
 
 /* Board */
 #board{
@@ -71,8 +56,11 @@ body{
 }
 
 .slot-container{
-  display:flex; flex-direction:column; align-items:center;
-  gap:8px; max-width: var(--slot-w);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  max-width: var(--slot-w);
 }
 
 .slot{
@@ -80,18 +68,22 @@ body{
   aspect-ratio: calc(var(--slot-w) / var(--slot-h));
   border-radius:10px;
   border: 3px dashed #c7cfdb;
-  display:flex; justify-content:center; align-items:center;
-  transform: translateZ(0);
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 .slot.over{ border-color:var(--ok); transform:translateY(-6px); }
 
 /* Cards */
 .card{
-  width:98%; height:98%;
+  width:98%;
+  height:98%;
   border-radius:8px;
   object-fit:cover;
-  touch-action:none; /* evita saltos en móvil */
-  transform: translateZ(0);
+
+  /* 🔥 FIX táctil */
+  touch-action:none;
+  transform:translateZ(0);
 }
 
 /* Footer buttons */
@@ -105,7 +97,8 @@ button{
   border-radius:10px;
   border:none;
   background:var(--accent);
-  color:#fff; font-weight:700;
+  color:#fff;
+  font-weight:700;
   cursor:pointer;
 }
 button.secondary{ background:#6b7280 }
@@ -118,17 +111,22 @@ button.secondary{ background:#6b7280 }
   position:fixed;
   inset:0;
   background:rgba(0,0,0,0.65);
-  display:flex; align-items:center; justify-content:center;
-  z-index:200; /* Antes 2000 */
+
+  /* antes era 2000 → causaba el daño */
+  z-index:200;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .guide-content{
   background:white;
   padding:20px;
   border-radius:14px;
-  max-width:1000px;
+  max-width:900px; /* 🔥 Más grande */
   width:95%;
-  max-height:95%;
+  max-height:90%;
   overflow:auto;
   position:relative;
   text-align:center;
@@ -137,14 +135,14 @@ button.secondary{ background:#6b7280 }
 
 .guide-content img{
   width:100%;
-  max-height: 90vh;
-  object-fit: contain;
   border-radius:10px;
 }
 
+/* Botón cerrar */
 .close-btn{
   position:absolute;
-  top:10px; right:10px;
+  top:10px;
+  right:10px;
   background:#d32f2f;
   color:white;
   border:none;
@@ -157,13 +155,15 @@ button.secondary{ background:#6b7280 }
 /* Botón flotante */
 .guide-button{
   position:fixed;
-  bottom:20px; right:20px;
-  z-index:150;
+  bottom:20px;
+  right:20px;
+
+  z-index:150; /* antes 1500 → interfería */
+
   background:#2f80ed;
   padding:12px 16px;
   border-radius:12px;
   box-shadow:0 10px 20px rgba(0,0,0,0.15);
   font-weight:700;
+  color:white;
 }
-
-
