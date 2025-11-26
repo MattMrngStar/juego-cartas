@@ -138,48 +138,109 @@ body{
 button{ padding:10px 14px; border-radius:10px; border:none; background:var(--accent); color:#fff; font-weight:700; cursor:pointer }
 button.secondary{ background:#6b7280 }
 
-/* --- GUÍA DE SOLUCIÓN (AJUSTES PARA VISUALIZACIÓN CORRECTA) --- */
+/* --- GUÍA DE SOLUCIÓN (AJUSTES FORZADOS Y TAMAÑO FIJO) --- */
 #solution-guide{
-  z-index: 100; 
+  z-index: 99999; /* Z-index máximo */
 }
 
-.guide-inner{
-  width: min(950px, 98%);      /* El modal no debe ser más ancho que 800px */
-  max-height: 90vh;            /* Limita la altura del modal */
+/* Selector más específico: asegura el ancho y la posición relativa */
+#solution-guide .guide-inner{
+  /* AUMENTAMOS EL ANCHO FORZADAMENTE (puedes ajustar 950px a tu gusto) */
+  width: 95vw !important; /* Ahora el 95% del ancho del viewport (máximo) */
+  max-width: 950px !important; /* Máximo 950px */
+  
+  max-height: 90vh;
   padding: 24px;
   border-radius: 12px;
   background: #ffffff;
   box-shadow: 0 16px 40px rgba(10,20,40,0.12);
   text-align: center;
-  overflow-y: auto;            /* Permite scroll dentro del modal si es necesario */
-  display: flex;               /* Activa el diseño flexible */
-  flex-direction: column;      /* Apila los elementos verticalmente */
-  align-items: center;         /* Centra los elementos */
+  overflow-y: auto;
+  
+  position: relative; /* Para que el botón de cierre funcione con 'absolute' */
+  padding-bottom: 70px; 
 }
 
-.guide-inner h2{
-  margin-top: 0;
-  color: var(--accent);
-  margin-bottom: 15px;
-}
-
-.guide-image{
-  max-width: 100%;             /* La imagen no excede el ancho del contenedor */
+/* Ajustes a la imagen dentro del modal */
+#solution-guide .guide-image{
+  /* Forzamos que la imagen use todo el ancho disponible en el contenedor */
+  width: 100% !important; 
+  max-width: 100% !important;
   height: auto;
-  object-fit: contain;         /* Mantiene las proporciones sin estirar la imagen */
+  
+  object-fit: contain; 
   display: block;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
-  flex-grow: 1;                /* Permite que la imagen use el espacio sin forzar el desbordamiento */
+  margin: 0 auto 20px auto; 
+  cursor: zoom-in; /* Indica que al hacer clic se puede hacer zoom */
 }
 
+/* Botón de cierre de la guía */
 #btn-close-guide{
+  position: absolute; 
+  bottom: 20px; 
+  left: 50%;
+  transform: translateX(-50%); 
   padding: 10px 20px;
   background: #dc3545; 
-  margin-top: auto;            /* Empuja el botón al final del contenedor */
+  z-index: 1000; 
 }
 
+
+/* --- ESTILOS PARA EL MODAL DE ZOOM DE IMAGEN --- */
+#image-zoom-overlay {
+  z-index: 999999; /* ¡Aún más alto para asegurar que esté sobre la guía! */
+}
+
+.zoom-inner {
+  width: 95vw; /* Ocupa casi todo el ancho de la pantalla */
+  height: 95vh; /* Ocupa casi toda la altura de la pantalla */
+  max-width: 1200px; /* Un tamaño máximo para pantallas muy grandes */
+  max-height: 900px; /* Un tamaño máximo de altura */
+  background: rgba(0,0,0,0.85); /* Fondo oscuro para el zoom */
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  padding: 10px; /* Pequeño padding interno */
+}
+
+#zoomed-guide-image {
+  max-width: 100%; /* Asegura que la imagen no se desborde */
+  max-height: 100%; /* Asegura que la imagen no se desborde */
+  object-fit: contain; /* Escala la imagen para que quepa sin cortarse */
+  border-radius: 8px;
+  cursor: zoom-out; /* Indica que al hacer clic de nuevo puede cerrar el zoom */
+}
+
+#btn-close-zoom {
+  position: absolute;
+  top: -15px; 
+  right: -15px;
+  background: #dc3545; /* Rojo para cerrar */
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2em;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  z-index: 1001; 
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  #btn-close-zoom {
+    top: 5px; /* Ajusta la posición para móviles si se sale de pantalla */
+    right: 5px;
+  }
+}
 
 /* Responsive */
 @media (max-width:900px){
