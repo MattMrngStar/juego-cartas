@@ -7,22 +7,36 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Música (dentro del body) -->
+
+  <!-- Música -->
   <audio id="bg-music" src="audio/musica.mp3" loop></audio>
 
-  <!-- PANTALLA DE INICIO (visible al cargar) -->
+  <!-- ============ GUÍA DE SOLUCIÓN ============ -->
+  <div id="guide-overlay" class="hidden">
+    <div class="guide-content">
+      <button id="close-guide" class="close-btn">✖</button>
+      <h2>Guía de Solución</h2>
+      <img src="Guia/guia-solucion.png" alt="Guía de solución completa">
+    </div>
+  </div>
+
+  <!-- Botón flotante para abrir guía -->
+  <button id="btn-open-guide" class="guide-button hidden">Ver Guía</button>
+
+
+  <!-- PANTALLA DE INICIO -->
   <div id="start-screen" class="overlay">
     <div class="start-inner">
       <h1>Ordena las Cartas</h1>
       <p>
-        Arrastra las cartas y colócalas en el orden correcto: 
+        Arrastra las cartas y colócalas en el orden correcto:<br>
         <strong>¿Cuál es el orden de los pasos para armar un Plan Familiar de Gestión del Riesgo?</strong>
       </p>
 
       <div id="demo-cards" aria-hidden="true">
-        <img class="demo-card" src="Cartas/CartasPFE-08.png" alt="reverso">
-        <img class="demo-card" src="Cartas/CartasPFE-08.png" alt="reverso">
-        <img class="demo-card" src="Cartas/CartasPFE-08.png" alt="reverso">
+        <img class="demo-card" src="Cartas/CartasPFE-08.png">
+        <img class="demo-card" src="Cartas/CartasPFE-08.png">
+        <img class="demo-card" src="Cartas/CartasPFE-08.png">
       </div>
 
       <div class="start-actions">
@@ -32,14 +46,14 @@
     </div>
   </div>
 
-  <!-- ÁREA DE JUEGO (oculta al inicio) -->
-  <main id="game-area" class="hidden" role="main" aria-label="Juego de ordenar cartas">
+  <!-- ÁREA DE JUEGO -->
+  <main id="game-area" class="hidden">
     <header class="hud">
       <div>Tiempo: <span id="timer">300</span>s</div>
       <div>Puntos: <span id="score">0</span></div>
     </header>
 
-    <section id="board" aria-label="Tablero de 7 slots">
+    <section id="board">
       <div class="slot-container"><span class="slot-number">1</span><div class="slot" data-slot="0"></div></div>
       <div class="slot-container"><span class="slot-number">2</span><div class="slot" data-slot="1"></div></div>
       <div class="slot-container"><span class="slot-number">3</span><div class="slot" data-slot="2"></div></div>
@@ -55,7 +69,7 @@
     </footer>
   </main>
 
-  <!-- PANTALLA FINAL (oculta al inicio) -->
+  <!-- PANTALLA FINAL -->
   <div id="end-screen" class="overlay hidden">
     <div class="start-inner">
       <h2 id="result-title">Resultado</h2>
@@ -63,10 +77,10 @@
       <div class="start-actions">
         <button id="btn-play-again">Jugar de nuevo</button>
       </div>
+      <button id="btn-end-guide" class="guide-button">Ver Guía</button>
     </div>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
