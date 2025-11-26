@@ -31,6 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnHelp = document.getElementById('btn-help');
     const solutionGuide = document.getElementById('solution-guide');
     const btnCloseGuide = document.getElementById('btn-close-guide');
+    // ELEMENTOS PARA EL ZOOM DE IMAGEN
+    const imageZoomOverlay = document.getElementById('image-zoom-overlay');
+    const zoomedGuideImage = document.getElementById('zoomed-guide-image');
+    const btnCloseZoom = document.getElementById('btn-close-zoom');
+
 
     /* estado global */
     let slots = [];             // se llenará dinámicamente
@@ -223,6 +228,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function hideGuide(){
         if(solutionGuide) solutionGuide.classList.add('hidden');
     }
+    
+    // NUEVAS FUNCIONES PARA EL ZOOM DE IMAGEN
+    function showZoom(){
+        if(imageZoomOverlay) imageZoomOverlay.classList.remove('hidden');
+    }
+
+    function hideZoom(){
+        if(imageZoomOverlay) imageZoomOverlay.classList.add('hidden');
+    }
+
 
     /* --- game logic --- */
     function startTimer(){
@@ -323,12 +338,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // LISTENERS DEL BOTÓN DE AYUDA Y CERRAR
     if(btnHelp) btnHelp.addEventListener('click', showGuide);
     if(btnCloseGuide) btnCloseGuide.addEventListener('click', hideGuide);
+    
+    // NUEVOS LISTENERS PARA EL ZOOM DE LA IMAGEN DE LA GUÍA
+    if(solutionGuide) { 
+        const guideImage = solutionGuide.querySelector('.guide-image');
+        if(guideImage) {
+            guideImage.addEventListener('click', showZoom);
+        }
+    }
+    if(btnCloseZoom) btnCloseZoom.addEventListener('click', hideZoom);
+    if(zoomedGuideImage) zoomedGuideImage.addEventListener('click', hideZoom); 
 
 
     /* inicial */
     placeShuffledCards();
     if(gameArea) gameArea.classList.add('hidden');
     // Muestra el tiempo inicial en 5:00s
-    if(timerEl) timerEl.textContent = '5:00'; 
+    if(timerEl) timerEl.textContent = '5:00s'; 
 
 }); // DOMContentLoaded
