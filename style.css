@@ -45,14 +45,55 @@ body{
 .start-inner p{color:#374151; margin:0 0 12px}
 .hint{color:#6b7280; margin-top:10px}
 
-/* Demo cards en inicio */
-#demo-cards{display:flex; gap:14px; justify-content:center; margin:12px 0}
-.demo-card{ width:82px; height:120px; object-fit:cover; border-radius:8px;
-  animation: float 4s ease-in-out infinite, flip 3s linear infinite;
+/* Demo cards en inicio (NUEVA ESTRUCTURA FLIP CARD) */
+#demo-cards{
+  display:flex; gap:14px; justify-content:center; margin:12px 0;
+  /* Define el tamaño de las cartas demo */
+  --demo-w: 82px;
+  --demo-h: 120px;
 }
-.demo-card[style]{ /* acepta --delay en inline style */ }
+
+.flip-card-container {
+  /* Contenedor principal que controla la animación de flotar (float) */
+  width: var(--demo-w);
+  height: var(--demo-h);
+  perspective: 1000px; /* Necesario para el efecto 3D */
+  animation: float 4s ease-in-out infinite var(--delay); /* Aplica la animación de flotar con el delay */
+}
+
+.flip-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: transform 1s;
+  transform-style: preserve-3d; /* Hace que el giro 3D sea visible */
+  animation: flip-demo 6s ease-in-out infinite var(--delay); /* Aplica la animación de giro con el delay */
+}
+
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  backface-visibility: hidden; /* Oculta el reverso mientras se ve el frente */
+}
+
+/* El frente de la carta debe estar volteado 180deg inicialmente para coincidir con el giro de la animación */
+.card-face.front {
+  transform: rotateY(180deg);
+}
+
+/* Animación de flotar */
 @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-14px)}100%{transform:translateY(0)}}
-@keyframes flip{0%{transform:rotateY(0)}50%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
+
+/* Animación de giro */
+@keyframes flip-demo {
+  0%, 10% { transform: rotateY(0deg); }   /* Muestra la cara posterior (reverso) */
+  40%, 50% { transform: rotateY(180deg); } /* Gira para mostrar la cara frontal (paso) */
+  90%, 100% { transform: rotateY(360deg); } /* Regresa a la cara posterior */
+}
+
 
 /* HUD */
 #game-area{ width:min(980px,98%); display:flex; flex-direction:column; align-items:center }
@@ -145,9 +186,9 @@ button.secondary{ background:#6b7280 }
 
 /* Selector más específico: asegura el ancho y la posición relativa */
 #solution-guide .guide-inner{
-  /* AUMENTAMOS EL ANCHO FORZADAMENTE (puedes ajustar 950px a tu gusto) */
-  width: 95vw !important; /* Ahora el 95% del ancho del viewport (máximo) */
-  max-width: 950px !important; /* Máximo 950px */
+  /* ANCHO FORZADO */
+  width: 95vw !important;
+  max-width: 950px !important;
   
   max-height: 90vh;
   padding: 24px;
@@ -157,13 +198,12 @@ button.secondary{ background:#6b7280 }
   text-align: center;
   overflow-y: auto;
   
-  position: relative; /* Para que el botón de cierre funcione con 'absolute' */
+  position: relative; 
   padding-bottom: 70px; 
 }
 
 /* Ajustes a la imagen dentro del modal */
 #solution-guide .guide-image{
-  /* Forzamos que la imagen use todo el ancho disponible en el contenedor */
   width: 100% !important; 
   max-width: 100% !important;
   height: auto;
@@ -194,10 +234,10 @@ button.secondary{ background:#6b7280 }
 }
 
 .zoom-inner {
-  width: 95vw; /* Ocupa casi todo el ancho de la pantalla */
-  height: 95vh; /* Ocupa casi toda la altura de la pantalla */
-  max-width: 1200px; /* Un tamaño máximo para pantallas muy grandes */
-  max-height: 900px; /* Un tamaño máximo de altura */
+  width: 95vw; 
+  height: 95vh; 
+  max-width: 1200px; 
+  max-height: 900px; 
   background: rgba(0,0,0,0.85); /* Fondo oscuro para el zoom */
   border-radius: 12px;
   display: flex;
@@ -205,22 +245,22 @@ button.secondary{ background:#6b7280 }
   justify-content: center;
   position: relative;
   box-shadow: 0 0 30px rgba(0,0,0,0.5);
-  padding: 10px; /* Pequeño padding interno */
+  padding: 10px; 
 }
 
 #zoomed-guide-image {
-  max-width: 100%; /* Asegura que la imagen no se desborde */
-  max-height: 100%; /* Asegura que la imagen no se desborde */
-  object-fit: contain; /* Escala la imagen para que quepa sin cortarse */
+  max-width: 100%; 
+  max-height: 100%; 
+  object-fit: contain; 
   border-radius: 8px;
-  cursor: zoom-out; /* Indica que al hacer clic de nuevo puede cerrar el zoom */
+  cursor: zoom-out; 
 }
 
 #btn-close-zoom {
   position: absolute;
   top: -15px; 
   right: -15px;
-  background: #dc3545; /* Rojo para cerrar */
+  background: #dc3545; 
   color: white;
   border-radius: 50%;
   width: 40px;
@@ -237,7 +277,7 @@ button.secondary{ background:#6b7280 }
 
 @media (max-width: 768px) {
   #btn-close-zoom {
-    top: 5px; /* Ajusta la posición para móviles si se sale de pantalla */
+    top: 5px; 
     right: 5px;
   }
 }
