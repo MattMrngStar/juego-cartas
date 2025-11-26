@@ -1,62 +1,48 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ordena los pasos – Plan Familiar</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ordena el Plan Familiar</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
-<!-- ============= -->
-<!--   OVERLAY DE INICIO -->
-<!-- ============= -->
+<!-- Overlay de inicio -->
 <div id="start-overlay" class="overlay">
   <div class="start-inner">
     <h2>Ordena los pasos del Plan Familiar de Emergencias</h2>
-    <p>Arrastra y organiza correctamente las cartas en el orden correcto.</p>
-
     <div id="demo-cards">
-      <img src="Cartas/1.png" class="demo-card">
-      <img src="Cartas/2.png" class="demo-card">
-      <img src="Cartas/3.png" class="demo-card">
+      <img class="demo-card" src="cartas/1.png" />
+      <img class="demo-card" src="cartas/2.png" />
+      <img class="demo-card" src="cartas/3.png" />
     </div>
-
-    <button id="start-btn">Iniciar</button>
+    <button id="start-btn">¡Jugar!</button>
   </div>
 </div>
 
-<!-- ============= -->
-<!--   ÁREA DEL JUEGO -->
-<!-- ============= -->
-<div id="game-area" class="hidden">
+<!-- BOTÓN GUÍA -->
+<button class="guide-button hidden" id="open-guide">Guía</button>
 
+<!-- OVERLAY GUÍA -->
+<div id="guide-overlay" class="hidden">
+  <div class="guide-content">
+    <button class="close-btn" id="close-guide">X</button>
+    <h2>Guía de solución</h2>
+    <img src="guia.png" alt="Guía de solución">
+  </div>
+</div>
+
+<div id="game-area">
   <div class="hud">
-    <span><strong>Intentos:</strong> <span id="tries">0</span></span>
+    <span>Intentos: <span id="tries">0</span></span>
   </div>
 
   <div id="board"></div>
 
   <div class="controls">
-    <button id="check-btn">Comprobar</button>
+    <button id="check-btn">Verificar</button>
     <button id="reset-btn" class="secondary">Reiniciar</button>
-  </div>
-
-</div>
-
-<!-- ============= -->
-<!--   BOTÓN GUÍA -->
-<!-- ============= -->
-<button id="open-guide" class="guide-button">Ver Guía</button>
-
-<!-- ============= -->
-<!--   OVERLAY GUÍA -->
-<!-- ============= -->
-<div id="guide-overlay" class="hidden">
-  <div class="guide-content">
-    <button id="close-guide" class="close-btn">X</button>
-    <img src="Guia/guia-solucion.png" alt="Guía de solución">
   </div>
 </div>
 
