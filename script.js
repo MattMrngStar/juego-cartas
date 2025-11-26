@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(solutionGuide) solutionGuide.classList.add('hidden');
     }
     
-    // NUEVAS FUNCIONES PARA EL ZOOM DE IMAGEN
+    // FUNCIONES PARA EL ZOOM DE IMAGEN
     function showZoom(){
         if(imageZoomOverlay) imageZoomOverlay.classList.remove('hidden');
     }
@@ -339,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(btnHelp) btnHelp.addEventListener('click', showGuide);
     if(btnCloseGuide) btnCloseGuide.addEventListener('click', hideGuide);
     
-    // NUEVOS LISTENERS PARA EL ZOOM DE LA IMAGEN DE LA GUÍA
+    // LISTENERS PARA EL ZOOM DE LA IMAGEN DE LA GUÍA
     if(solutionGuide) { 
         const guideImage = solutionGuide.querySelector('.guide-image');
         if(guideImage) {
